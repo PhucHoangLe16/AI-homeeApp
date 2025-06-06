@@ -1,0 +1,815 @@
+The HomEE app is designed specifically for organizations specializing in providing 
+tailored housing and accommodation solutions for employees and businesses. 
+Seamlessly integrated with the HomEE portal, the app empowers the employees to
+manage their tasks efficiently, stay organized, and deliver their services with ease.
+
+Auth
+1. Username Input page
+- Split into 2 sections:
+	- Section 1: Display a logo of the app
+	- Section 2: Display a input field to help the user input their username
+		- Username is required
+		- Display a button to help the user click to continue
+		- User is single tenant -> navigate to Password Input page
+		- User is multi tenant -> navigate to Select Tenant page
+
+2. Select Tenant page
+- Split into 2 sections:
+	- Section 1: Display a logo of the app
+	- Section 2: Display a list of tenants that the user can select
+		- Tenant is required
+		- Display a button to help the user click to continue
+		- Click on the button to navigate to the Password Input page
+
+3. Password Input page
+- Split into 2 sections:
+	- Section 1: Display a logo of the app
+	- Section 2: Display a input field to help the user input their password
+		- Password is required
+		- Display a button to help the user click to login and navigate to the Home page
+
+4. Reset Password page (when account is created by admin)
+- Split into 2 sections:
+	- Section 1: Display a logo of the app
+	- Section 2: Display a input field to help the user input their new password and confirm new password
+		- New password is required, min 8 characters, at least 1 uppercase, 1 lowercase, 1 number, 1 special character
+		- Confirm new password is required
+		- New password and confirm new password must be the same
+		- Display a button to help the user click to continue
+		- Click on the button to navigate to the Home page
+
+--------------------------------
+After login successfully, have main layout wrap all the screens:
+- Header: Display the title of the screen in left and display 3 icons in right:
+	- Icon 1: Display the Network status Icon (green if connected, red if not connected)
+	- Icon 2: Display the Notification Icon
+	- Icon 3: Display the Profile Icon
+
+--------------------------------
+Home:
+- Title: Welcome
+- The Home screen is the main page that users see when they open the app. It helps users easily manage two main features:
+	- Shopping List
+	- Daily Tasks
+- At the top of the screen, there is a week selector that allows users to pick any day. Based on the selected day, the screen will show either the shopping list or the tasks for that specific date.
+  - When the user is still using the app, the selected day should keep it
+  - When a user logs out and logs in again or lock screen, then back to the app → It will show the default today
+
+- Below the date selector, the screen displays one of the two sections: Shopping list or Task (Shopping list is default)
+	- Shopping list:
+		- Click on an article on the Shopping list tab
+			- In case the articles are not picked up from the shopping list overview
+				- Click on the articles
+				- Navigate to the screen Shopping list screen
+			- In case the articles are already picked up from the shopping list overview
+				- Click on the articles
+					- Expand to display information of job reserved this articles with:
+						- Job title
+						- Location
+						- Reserved & Collected amount
+				- Click again to collapse the articles
+				- Highlight the border using purple 
+		- Split the articles from this by screen by status
+			- With the shopping list that has:
+				- Same article
+				- Same warehouse
+				- But different states: Picked up or Not picked up
+					- It should be displayed as 2 different blocks
+						- 1 block contains all articles that have not been pick-up yet → Click on to navigate to the “shopping list” screen
+						- 1 block contains all articles that have already been picked up → Click on to expand and view articles is needed for which job 
+					- These blocks only combine when they have the same status
+	- Task:
+		- Click on a job in the Task tab
+			- Directly open the job to help the user view job details
+		- if the job is ready (ready job offline) -> display border with green color and icon status network disconnected on the top right and block user to click on the job
+		- show icon follow task tab selected (Inspection, Maintenance, Cleaning) in same position with icon status network disconnected
+- Users can easily switch between these two sections. The screen also updates automatically when the user changes the date, or when there are changes in the app’s settings, language, or theme.
+- Bottom bar has 3 icons: This week corresponds to This Week (Home), Shopping List, and Task
+
+--------------------------------
+Profile page
+- Title: Your profile
+- Click on the Profile Icon to open screen display Profile and Password information
+	- By default display tab Details
+
+1. Profile Detail
+Profile Detail:
+- Title: Details
+- User info
+	- First name (required, max 64 characters)
+	- Last name (required, max 64 characters)
+	- Gender (required, single option: Male, Female, Other)
+	- Email (required, max 64 characters)
+	- Phone number 1 (required, max 24 characters, min 8 characters, only number)
+	- Phone number 2 (optional, max 24 characters, min 8 characters, only number)
+	- Display the role that admin grant permission for this user 
+
+- Language: Display the language that admin selected for this user 
+	- Language (single option: English, Dutch)
+
+- Account
+  - Username (readonly)
+
+- Has roles
+ - Role: list of roles that admin grant permission for this user (readonly)
+
+- Settings
+	- By default select: Shopping list
+	- Click on to dropdown 2 option: Shopping list and Task
+	- When user login the Dashboard → Display the corresponding tab that user selected from Settings
+
+- Switch to allow photo storage on this Device
+	- Display a switch to allow photo storage on this Device
+	- By default, the switch is follow the setting of the device
+	- When the switch is on, the user can save this photo to the device when taking photo
+	- When the switch is off, the user cant save this photo to the device when taking photo
+
+- Button
+	- Click on the "Save changes" button to save the profile detail
+		- Display message when updating user profile successfully “Update profile success”
+	- Click on the "Logout" button to logout the user
+
+2. Update Password
+- Title: Password
+- Click on tab “Password” to open Password screen and help user able the user account’s password 
+	- Old password (required)
+	- New password (required, min 8 characters, at least 1 uppercase, 1 lowercase, 1 number, 1 special character)
+	- Confirm new password (required, must be the same as new password)
+
+- Button
+	- Click on the "Save changes" button to save the password
+		- Display message when updating user profile successfully “Update password success”
+		- If the new password matches the old password display message “New password must be different from the current password” and not allow user to update the password
+
+3. Bottom bar
+- Display 3 icons:
+	- Icon 1: Display the This Week Icon
+	- Icon 2: Display the Shopping List Icon
+	- Icon 3: Display the Task Icon
+
+--------------------------------
+Shopping list
+- Title: Shopping list
+1. Filter Shopping list (Display the filter on the top of the shopping list overview)
+Click on the filter button to display a pop-up to help the user filter
+
+1.1. Date
+- Date field
+- Default = Current day
+- Date format dd/mm/yyyy
+- Filter by selected date range 
+
+1.2 Warehouse
+- Default all
+- Dropdown list warehouse in the system 
+- Single option
+- Filter by selected Warehouse 
+- Display Warehouse as a placeholder
+
+1.3 Type   
+- Default all
+- Dropdown list of job types in the system
+		There are 3 types: Inspection, Maintenance, Cleaning
+- Single option
+- Display Type as a placeholder
+
+2. Complete button
+- Display a complete button with the button label “Confirm”
+  - Display button as green background if the shopping list is empty else display button as purple background
+	- Click on the button to complete the shopping list
+		- Show a modal to confirm the action
+			- Modal title: “Confirm”
+			- Modal message: 
+				- if user picked up all articles: “Are you sure?/nThis action cannot be undone.”
+				- if user did not pick up all articles: “Are you sure?/nPLEASE NOTE, you have not yet collected all required items.”
+			- Display 2 buttons: “Close” and “Confirm”
+			- Click on the “Confirm” button to complete the shopping list
+				- Display message when completing the shopping list successfully “Shopping list picked-up completed”
+				- Clear all articles from the shopping list
+
+3. Display list of reserved article
+- Display all reserved articles that are assigned for this Main Worker on the selected date
+- Each line will be
+	- the sum of the reserved article of all jobs assigned to the main worker from a warehouse
+	- the input field to help the user input the number of article that they picked up
+		- Must be >= 0
+		- Picked up must not > Ready for pick up
+
+- Users could click on each article to open a list of all jobs needed for this article
+- Article detail in the Shopping list overview: Display article as: <Article ID> - <Description>
+	- Article ID
+	- Description
+	- Warehouse
+	- Ready for pick up
+	- Picked up 
+
+4. Bottom bar
+- Display 3 icons:
+	- Icon 1: Display the This Week Icon
+	- Icon 2: Display the Shopping List Icon
+	- Icon 3: Display the Task Icon
+
+--------------------------------
+Shopping list detail
+- Title: Shopping list
+1. Open this screen:
+- When the user clicks on the articles from the shopping list overview
+- Navigate to the screen to display all jobs reserved for this article on the filtered date
+
+2. List of jobs assigned to the article
+2.1 Autofill pickup amount when user input from the shopping list overview
+- When the number of articles that the worker input in picked up articles from the Shopping list overview
+	- Open List of jobs assigned articles pop-up
+	- Take the picked up from Shopping list and autofill from top to bottom to this pop-up by default
+	- This Picked up could be editable by the worker
+
+2.2 Check the amount of article
+- The sum picked up from List of jobs assigned articles not > or < picked up from the Shopping list
+	- Disable the “Save” button if that case is happen and show message “Your total is incorrect/nYour total picked up item dont match your list”
+	- Only allow user “Save” the amount when all the pickup from the list job is equal to pickup from the overview
+
+3. Button
+- Click on “Cancel” button to navigate back to the Shopping list overview
+- Click on the “Save” button to save all “update” amount of pick-up article and navigate back to the Shopping list overview
+
+--------------------------------
+Job list
+- Title: Tasks
+1. Filter job 
+Click on the filter button to display a pop-up to help the user filter
+
+1.1. Date range
+- Date range field
+- Default = Current week
+- Date format dd/mm/yyyy
+- Filter by selected date range 
+
+1.2 Location
+- Default all
+- Dropdown list location in the system 
+- Single option
+- Filter by selected Location 
+- Display Location as a placeholder
+
+1.3 Type (only for inspection job)
+- Default all
+- Dropdown list of job types in the system
+		There are 3 types: Begin, End, Regular
+- Single option
+- Display Type as a placeholder
+
+2. List Job overview 
+
+2.1 Display job per type
+- Display 3 tabs: Inspection, Maintenance, Cleaning job 
+	- Display the job in the corresponding job type 
+
+2.2 Show completed jobs
+- Display a toggle to help the user switch between list incomplete and completed job 
+	- Switch off: to display the list of incomplete job 
+	- Switch on: to display the list of completed job 
+- By default display a list of incomplete jobs in each job type
+- With the completed job → Display a border with green and display a green checkmark on the top right 
+
+2.3 Show ready jobs (offline jobs)
+- With the offline job → Display a border dashed with green and display a green icon status network disconnected on the top right 
+
+2.4 List Job detail 
+- Display the newest created/updated job on the top by default
+- Display an inspection job as:
+	- Job title
+	- Job Identifier
+	- Location 
+- No pagination
+	- Display all the inspections and make the list scrollable
+- Bottom tab navigation: Display Task tab
+
+--------------------------------
+Create task
+- Title: New task
+- Open this screen
+	- Go to task page and select task tab (Maintenance, Cleaning)
+	- Click on the icon + button to navigate to the screen to add new maintenance/cleaning job
+
+Step 1:
+1. Create a maintenance/cleaning job
+- Display the corresponding label on the top left of the list when user creates new job in that list
+	- Display “Maintenance” when user create new maintenance job
+	- Display “Cleaning” when user create new cleaning job
+
+- Field detail creates new job:
+  - General:
+		- Title
+			- Input field
+			- Free text
+			- Optional field not required
+
+		- Location
+			- Click on to drop a list location in the system
+			- Single option
+			- Location is required.
+
+		- Unit & sub-unit
+			- Click on the dropdown list unit and sub-unit user selected
+			- Disable field until user selects a location
+			- Multiple option
+			- Unit and sub-unit is required.
+
+		- Mechanic/Cleaner
+			- Display the “User name” created this job
+			- Can’t editable
+
+		- Date of maintenance/cleaning job
+			- Click on to display a calendar to help user select date time
+			- Display a “calendar” icon at the end of input field
+			- Date time format” dd/mm/yyyy
+			- Default value is current date
+
+		- Estimated hour(s)
+			- Display date time as HH:MM
+			- Maximum input is 99:59
+			- Estimated hour(s) is required.
+
+	- Internal work instruction
+		- Input field (optional)
+
+3. Button
+- Click on the "Cancel" button to cancel create new and get back to the corresponding maintenance or cleaning job list
+- Click on the "Next" button to navigate to the create task screen step 2
+- Disable button "Next" until user fills all the required fields
+
+Step 2:
+
+- Field detail creates new job:
+	- Template
+		- Click on to dropdown a list “inspection template”
+		- Single option
+
+	- Maintenance/Cleaning point
+		- Display each point corresponding as unit and sub-unit user selected
+		- Able to add new, remove and order the position of a point in a unit or sub-unit
+
+1. Apply General template & Inspection template to the inspection point
+- Autofill all job point of “inspection templates” to the selected units and sub-unit
+	- In case the user removes all the job points added by the Inspection template
+		- It will fill all the inspection templates again if the user adds another unit to that job or adds another unit.
+
+2. Handle some rainy cases in apply job point
+- When the user selects the general template first
+	- The job point of the root unit must contain job point by order:
+		- Inspection template job point
+		- General template job point
+
+- When the user change the location → The general template should be removed too
+	- Also, the case user removes the root unit(location) → The selected general template should also be removed too
+
+- When the general template is selected:
+	- If the user changes the general template → Apply the new general template and display it as under current job point
+	- If the user removes the general template → Remove all the inspection point of that general template
+
+- When the unit is added with inspection point (from default & inspection template job point) and user removes these inspection points
+	- Autofill all job points (including default job point + job point from inspection template if it have) when the user adds another unit into the list unit & sub-unit
+	- The case unit contains any job point in a unit → keep current job point in unit & sub-unit
+
+- In the case that the user does not manually add a root unit (unit is selected when user selects general template) and then the user removes the general template
+	- Keep the root unit selected and remove the inspection point from that general template
+
+3. Button
+
+3.1. Open a new job with a maintenance/cleaning point
+- Click on the “Cancel” button to cancel create new and get back to create task screen step 1
+- Click on the “Open” button to create new maintenance/cleaning job
+	- Display message corresponding with job type user created:
+		- “Maintenance created successfully” if the user creates a maintenance job
+		- “Cleaning created successfully” if a user creates a cleaning job
+
+3.2. Open a new job without a maintenance/cleaning point
+- Case user creates a job without any job point in the Root unit, unit, or sub-unit
+	- Display a warning pop-up when user clicks on the “Open” button
+		- Warning title: No points added
+		- Warning message: Please add points to open the maintenance job!
+		- Display: cleaning job if the user opens a cleaning job
+		- Click on “Close” button to close the pop-up
+
+3.3. Case user creates a job with a root unit, unit, or sub-unit that is missing some job point
+- Display a warning pop-up when user click on the “Open” button
+	- Warning title: Warning! Remove empty location levels
+	- Warning message: The <List unit missing job point>, do not contain any maintenance point, these units / sub-units will be removed from the maintenance. Do you want to continue?
+		- <List unit missing job point>: are all the units that not have any job point
+		- Display: cleaning job if the user opens a cleaning job
+		- Click on “Close” button to close the pop-up
+
+--------------------------------
+Job detail
+page 1:
+Title: General
+Open a job detail by clicking on a job in the List Job
+When opening a job detail:
+- Display the correct Job type on the top left of the screen
+- Display the Inspection Identifier and location on the top right of the screen
+
+1. General Information
+- Title
+- Unit-Sub-unit
+- Inspector
+- Co-worker(s)
+- Inspection planner
+- Inspection planned on
+- Type
+- Cars
+- Devices
+- Internal work instruction
+
+2. Button
+- Display 2 buttons: Previous and Next at the bottom
+	- Click on the Previous button to navigate back to the List Inspection
+	- Click on the Next button to navigate to the Location information screen
+
+page 2:
+Title: Location
+When location in a job detail:
+- Display the correct Job type on the top left of the screen
+- Display the Inspection Identifier and location on the top right of the screen
+
+1. Location information
+- This screen will display all the “Location of” that Location
+	- The “top column” will display on the label
+	- The “bottom column” will display the field content
+		- The field content should fit with the site content
+
+2. Button
+- Display 2 buttons: Previous and Next at the bottom
+	- Click on the Previous button to navigate back to the screen to view Inspection’s general information
+	- Click on the Next button to navigate to the screen to view the needed article
+
+page 3: 
+Title: Needed articles
+- Display the list of articles that are needed for the job
+- Display the article as:
+	- Table header: 
+		- Column 1: Category/nArticle
+		- Column 2: Reserved/Collected
+	- Table body:
+		- Display the article as:
+			- Category name /n Identifier - Description - total amount - total picked up
+- Display the button:
+	- Click "Previous" to navigate back to the screen to view the location information
+	- Click "Start" to navigate to the screen to start and view the inspection detail
+
+--------------------------------
+Perform job (Inspection detail)
+- Title: Tasks
+- When opening a job detail to perform:
+	- Display the correct Job type on the top left of the screen
+	- Display the Inspection Identifier and location on the top right of the screen
+
+
+1.1 Progress bar
+- Display a progress bar to help the user see the progress of the job (point completed / point total)
+
+1.2 Select Unit and Sub-unit
+- Display title Unit & Sub-unit
+- By default select the first unit on the list unit and sub-unit
+- Click on the dropdown:
+	- Display the list of units and sub-units that need to be inspected/maintain/cleaning
+	- When all inspection point in a unit is inspected
+		- Display a green checkmark to help the user know that the unit is completed
+
+1.3 Inspection point detail
+- When the user select and unit and sub-unit
+	- Display all Inspection points of that unit as a separate section to help workers inspect
+
+- Each section will contain:
+	- Title
+		- Display the Inspection point that entered by planner when creating job
+	- Description
+		- Default none
+		- Input field
+		- Free text
+		- This field is not required if user review inspection point as Green - Good condition
+		- Only display message required when user review inspection as Orange - Neutral condition and Red - Bad condition
+			- Display message: Please enter findings and image(s)
+				- Only hide message when user already input description and take a photo in this inspection point
+	- Review Inspection point
+		- For each inspection, display 3 review inspection code to help user evulation
+		- By default none select any review inspection code
+			- Inspector/Mechanic/Cleaner must select 1 in 3 code to mark the inspection point is inspected
+				- Green - Good condition
+					- Color code (Background: EFF4EA, face: 5B912C)
+				- Orange - Neutral condition
+					- Color code (Background: FFF3EA, face: FF8D36)
+				- Red - Bad condition
+					- Color code (Background: FFE6E8, face: D2232A)
+	- Take photo 
+		- Display the “camera” button
+			- Click on to “Camera” to display 3 options:
+				- Take photo from library
+				- Take photo from camera
+				- Cancel
+		- Allow to take photo and select maximum 8 photo
+	- Cost to bill (block when report type is internal)
+    - Display the “Euro” button next to camera button
+			- Click on the button to open modal create cost line
+				- Modal title: “Cost to bill”
+				- Modal header: “Costs per item/article” + icon “+” in the top right to add new cost line
+				- Modal body:
+					- Display the list of cost line
+						- Display the cost line as:
+							- Description (optional, default none)
+							- Cost per item (required)
+							- Quantity (required)
+							- Total cost (readonly) = Cost per item * Quantity
+							- Display the "Remove" button in same line with total cost
+				- Modal footer:
+					- Display the “Apply” button in the bottom to save the cost line
+					- Display the “Close” button in the bottom to cancel the cost line
+	- Follow up action
+    - Display the “Plus” button next to euro button
+    - Click on the button to open modal create follow-up action
+        - Modal title: “Follow up actions”
+        - Modal header: “Follow up actions per item/article”
+        - Modal body: (default show 1 follow-up action)
+							- Display the list of follow-up action
+                - Display the follow-up action as:
+                    - Description (optional, default none)
+                    - Camera button to take photo from library or camera
+                    - Display the "Remove action" button
+						- When user click on the "Remove action" button
+							- Display "+" icon to add new follow-up action in same line with Modal header
+						- When user add photo to follow-up action
+							- Display the photo in the follow-up action
+							- When user click on the photo
+								- Display the photo
+								- Swipe to open next photo
+								- Click "x" icon to close photo
+							- When user long press on the photo
+								- Display the "Delete" and "Cancel" button
+								- When user click on the "Delete" button
+									- Remove the photo and hide the "Delete" and "Cancel" button
+				- Modal footer:
+					- Display the “Apply” button in the bottom to save the follow-up action
+					- Display the “Close” button in the bottom to cancel the follow-up action
+	- List image added to point
+		- Display the list of image added to point
+			- Display the image as:
+				- Click on the image to open the image
+				- Swipe to open next image
+				- Click "x" icon to close image
+				- When user long press on the image
+					- Display the "Delete" and "Cancel" button
+					- When user click on the "Delete" button
+						- Remove the image and hide the "Delete" and "Cancel" button
+
+2. Bottom bar
+- Click on the “Back” button to return to the Needed article screen (Job detail)
+- Click on the “Save” button to Save all process what worker inputted
+- If job status is not (completed or closed) or the user is not the coworker
+	- Display the “Used article” button to move to screen used article
+		- Click on the “Used article” button to move to screen used article
+- If job status is completed or closed or the user is the coworker
+	- Display the “Summary” button to move to screen summary
+		- Click on the “Summary” button to move to screen summary
+			
+--------------------------------
+Used article
+1. Used article 
+- Article
+	- Display as Article ID - Description
+- Location
+- Available
+- Used
+	- Default none
+	- Input fields
+		- Number
+		- Value Range
+			- Maximum value must be <= Available in location
+			- Minimum value >= 0
+	- If user leave this field blank and save → Display message: Used is required
+- Unused
+	- Default none
+	- Unused article = Available in location - Used article
+- In location
+	- Default display the amount of exist article in this location from previous job
+		- The article will be counted on the location when the job is completed/closed on the portal
+
+2. Additional used article 
+2.1 Field detail
+- From Van
+	- Click on to display a list active storage with type “Van” in the system
+	- Van is required
+- Article
+	- Click on to display a list of article from the corresponding Van
+	- Display the article from the list as Article ID - Description
+	- Article is required
+- Available
+	- Default none
+	- Display the amount of article Available from that van
+- Amount
+	- Default none
+	- Input fields
+		- Number
+		- Value Range
+			- Maximum value must be <= Available in location
+			- Minimum value >= 0
+	- If user leave this field blank and save → Display message: Amount is required
+
+2.2 Button in Additional used article
+- Click on “+” button to add a new section with Van to used article
+	- When a Van is selected in an additional section → It shouldn’t be selected in other section
+		- Note: the Van shouldn’t be select duplicate in multiple section
+	- When a Article is selected in an additional Van → It shouldn’t be selected in the same Van
+		- Note: The Article shouldn’t be select duplicate in the same Van
+3. Bottom screen button
+- Click on “Back” button → Back to the screen review job point
+- Click on “Save” button → Save all input used article
+	- When the worker adds a new additional article section without any report article line
+		- Display message: At least one article must be entered
+- Click on “Summary” → Able to view the summary screen
+
+--------------------------------
+Returned article
+1. Return article from job
+1.1 Return field detail 
+- To warehouse
+	- Click on to display a list active storage with type Warehouse in the system
+	- Warehouse is required
+- Location
+	- Display the location of the inspection
+- Article
+	- Dropdown list article from the job
+	- With article have Available = 0 → it shouldn’t display on the list
+- Available
+	- Display the unused amount has been calculated of that article from the Used article tab
+- Amount
+	- Default none
+	- Input fields
+		- Number
+		- Value Range
+			- Returned Amount from job + Broken Amount from job must = Available
+			- Minimum value > 0
+	- If user leave this field blank and save → Display message: Amount is required
+- To van
+	- Click on button “Add returned to van” to display a corresponding section with type return is Van
+	- Click on to display a list active storage with type Warehouse in the system
+	- Warehouse is required
+
+2. Return article from location
+2.1 Field detail
+- To storage
+	- Click on to display a list active storage with in the system
+	- Storage is required
+- Article
+	- Click on to display a list of article from unused article
+	- Display the article from the list as Article ID - Description
+	- Article is required
+- In location
+	- Default none
+	- Display the amount of article Available of that article in the Location
+- Amount
+	- Default none
+	- Input fields
+		- Number
+		- Value Range
+			- Maximum value must be <= Available in location
+			- Minimum value > 0
+	- If user leave this field blank and save → Display message: Amount is required
+
+2.2 Button in Returned article from location
+- Click on “New return” to add a new section for return article from location
+- Able to add, remove the article and remove the section return article from location 
+
+3. Bottom screen button
+- Click on “Back” button → Back to the screen review job point
+- Click on “Save” button → Save all input used article
+	- When the worker adds a new returned article from location section without any report article line
+		- Display message: At least one article must be entered
+- Click on “Summary” → Able to view the summary screen
+
+--------------------------------
+Broken article
+1 Broken article from job
+- Article
+	- Dropdown list article from the job
+	- With article have Available = 0 → it shouldn’t display on the list
+- Available 
+	- Display the unused amount has been calculated of that article from the Used article tab
+- Amount
+	- Default none
+	- Input fields
+		- Number
+		- Value Range
+			- Returned Amount from job + Broken Amount from job must = Available
+			- Minimum value > 0
+		- If user leave this field blank and save → Display message: Amount is required
+
+- Reason
+	- Optional field
+	- Input field
+
+2 Broken article from location
+2.1 Field detail
+- Article
+	- Click on to display a list of article from the corresponding Van
+	- Display the article from the list as Article ID - Description
+	- Article is required
+- In location
+	- Default none
+	- Display the amount of article Available of that article in the Location
+- Amount
+	- Default none
+	- Input fields
+		- Number
+		- Value Range
+			- Maximum value must be <= Available in location
+			- Minimum value > 0
+		- If user leave this field blank and save → Display message: Amount is required
+- Reason
+	- Optional field
+	- Input field
+
+2.2 Button in broken article from location
+- Not allow worker to create a new broken article section
+- Just used 1 section to add & remove the article 
+
+3. Bottom screen button
+- Click on “Back” button → Back to the screen review job point
+- Click on “Save” button → Save all input used article
+	- When the worker adds a new broken article from location section without any report article line
+		- Display message: At least one article must be entered
+- Click on “Summary” → Able to view the summary screen
+
+--------------------------------
+Summary
+
+1.1 Result Summary and Used cars/devices
+- Result summary screen
+	- Sum of all review inspections in that job
+		- Green result
+		- Orange result
+		- Red result
+- Time Spent
+	- Display “Worker” and their Estimated hour(s) and Actual hour(s)
+	- Allow to edit Actual hours
+		- Display Actual hour(s) is required if leave this field is 00:00
+- Used cars
+- Used Devices
+
+1.2 Used/Returned article
+- Able to expand and collapse the section
+- Display each article line with total Used and Returned amount
+  - Display the Total price, Labor price and Removal fee under article
+  	- This line could be expand and collapse  
+
+1.3 Broken article
+- Able to expand and collapse the section
+- Display each article line with total Broken amount
+  - Display the Reason broken under article line
+  - Display the Total price, Labor price and Removal fee under reason field
+  	- The Reason and Price could be expand and collapse 
+
+1.4 Expenditures
+- Able to expand and collapse the section
+- Display each cost line with a unit and sub-unit create that cost line
+	- Expenditure: display the Description of cost line
+	- Display the Total price, Amount and Total price under field Expenditure
+    - The expenditure and Price could be expand and collapse
+
+1.5 Follow up action
+- Able to expand and collapse the section
+- Display each cost line with a unit and sub-unit create that cost line
+	- Action: display the Description of the follow-up action
+	- Display image of the follow-up action that inspector added
+		- The action and image could be expand and collapse 
+
+1.6 Feedback
+- Display 2 field with:
+	- Internal feedback to inspection reviewer
+	- Follow up actions
+		- These field is input field and optional to input
+
+2. Bottom bar
+- Click on “Back” to go back to broken article screen
+- Click on “Submit” to ready the job on the Mobile and go to the List Inspection/Maintenance/Cleaning job
+
+--------------------------------
+Offline mode
+- Icon network will be red
+- Tasks page still works but cannot perform actions such as:
+  - Create new task
+  - Refresh task list
+- When user click on the task, if the task has been accessed before, the user can still access the task and view the details else show message: "You are offline, please check your internet connection"
+- If user has been accessed perform job page, the user can still access this page and used article, returned article, broken article and summary page else show message: "You are offline, please check your internet connection"
+- When user click save button in perform job page, show message: "Save successfully" and the data will be saved in the local database
+- When user click save button in used article page and not change any data at additional used article, show message: "Save successfully" and the data will be saved in the local database else show message: "Save failed. Please turn on your internet connection"
+- When user click save button in returned article page and not change any data at additional returned article, show message: "Save successfully" and the data will be saved in the local database else show message: "Save failed. Please turn on your internet connection"
+- When user click save button in broken article page and not change any data at additional broken article, show message: "Save successfully" and the data will be saved in the local database else show message: "Save failed. Please turn on your internet connection"
+- When user click submit button in summary page, show message: "Ready job successfully" and the data will be saved in the local database and navigate to the List Inspection/Maintenance/Cleaning job page
+
+When user turn on the internet connection:
+- All data in local database will be synced to the server
+- Sync data action will be performed automatically daily 30 minutes
+
+--------------------------------
+Special case
+- If job was rejected by the admin, the user can still access the job and view the details then start the job again but cannot edit used/returned/broken article from job just only can edit used/returned/broken article from location
+- If user is coworker, the user can still access the job and view the details and cannot start the job and just only view the perform job page and summary page and edit actual hours

@@ -1,0 +1,96 @@
+# Task ID: 15
+# Title: Implement Article Management Screens
+# Status: pending
+# Dependencies: 14
+# Priority: medium
+# Description: Create screens for managing used, returned, and broken articles during job execution, with source distinction (job, location, van) and specific validation rules.
+# Details:
+1. Create base ArticleManagementScreen component:
+```typescript
+const ArticleManagementScreen: React.FC<{
+  jobId: string;
+  type: 'used' | 'returned' | 'broken';
+}> = ({ jobId, type }) => {
+  const [articles, setArticles] = useState<ArticleWithSource[]>([]);
+  const [isOnline] = useNetworkStatus();
+  
+  // Load articles based on type
+  useEffect(() => {
+    loadArticles(jobId, type);
+  }, [jobId, type]);
+  
+  const handleQuantityChange = (articleId: string, source: 'job' | 'location' | 'van', quantity: number) => {
+    // Update article quantity
+  };
+  
+  const handleAddArticle = (source: 'job' | 'location' | 'van') => {
+    // Show article selection modal
+  };
+  
+  const handleSave = async () => {
+    // Check if any "additional" articles from Van and online requirement
+    const hasAdditionalVanArticles = articles.some(a => a.source === 'van' && a.isAdditional);
+    
+    if (hasAdditionalVanArticles && !isOnline) {
+      // Show error - cannot save additional van articles offline
+      return;
+    }
+    
+    // Save articles
+  };
+  
+  return (
+    <AppLayout title={`${type.charAt(0).toUpperCase() + type.slice(1)} Articles`}>
+      <SourceTabs onAddArticle={handleAddArticle} />
+      <ArticleList 
+        articles={articles} 
+        onQuantityChange={handleQuantityChange} 
+      />
+      <Button title="Save" onPress={handleSave} />
+    </AppLayout>
+  );
+};
+```
+
+2. Create specific screens for each article type:
+   - UsedArticlesScreen
+   - ReturnedArticlesScreen
+   - BrokenArticlesScreen
+
+3. Implement SourceTabs component to switch between article sources (Job, Location, Van)
+4. Create ArticleList component to display and manage articles
+5. Implement ArticleSelectionModal for adding articles
+6. Create ArticleManagementService to handle article operations:
+```typescript
+class ArticleManagementService {
+  // Get articles by type and job
+  async getArticles(jobId: string, type: 'used' | 'returned' | 'broken'): Promise<ArticleWithSource[]> {...}
+  
+  // Get available articles for selection
+  async getAvailableArticles(jobId: string, source: 'job' | 'location' | 'van'): Promise<Article[]> {...}
+  
+  // Update article quantity
+  async updateArticleQuantity(jobId: string, articleId: string, source: 'job' | 'location' | 'van', type: 'used' | 'returned' | 'broken', quantity: number): Promise<boolean> {...}
+  
+  // Save article changes
+  async saveArticleChanges(jobId: string, type: 'used' | 'returned' | 'broken'): Promise<boolean> {...}
+  
+  // Check if changes can be saved offline
+  canSaveOffline(articles: ArticleWithSource[]): boolean {...}
+}
+```
+
+7. Implement validation rules for each article type and source
+8. Create error handling for offline restrictions with "additional" articles
+
+# Test Strategy:
+1. Unit test ArticleManagementScreen, SourceTabs, ArticleList components
+2. Test specific screens for each article type
+3. Verify article quantity updates work correctly
+4. Test article selection and addition
+5. Verify validation rules for each article type and source
+6. Test offline restrictions for "additional" articles
+7. Verify save functionality works correctly
+8. Test error handling for validation failures
+9. Verify data is correctly saved to local database
+10. Test synchronization of article data

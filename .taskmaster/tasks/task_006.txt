@@ -1,0 +1,79 @@
+# Task ID: 6
+# Title: Implement Network Status Detection and Offline Mode Indicator
+# Status: pending
+# Dependencies: 5
+# Priority: high
+# Description: Create a service to detect network connectivity status, update the UI accordingly, and manage the application's behavior in offline mode.
+# Details:
+1. Implement network status detection using React Native's NetInfo:
+```typescript
+import NetInfo from '@react-native-community/netinfo';
+import { createContext, useContext, useEffect, useState } from 'react';
+
+type NetworkContextType = {
+  isConnected: boolean;
+  lastConnectedAt: Date | null;
+};
+
+const NetworkContext = createContext<NetworkContextType>({
+  isConnected: true,
+  lastConnectedAt: null,
+});
+
+export const NetworkProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
+  const [isConnected, setIsConnected] = useState(true);
+  const [lastConnectedAt, setLastConnectedAt] = useState<Date | null>(null);
+  
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      const connected = state.isConnected && state.isInternetReachable;
+      setIsConnected(!!connected);
+      
+      if (connected && !isConnected) {
+        setLastConnectedAt(new Date());
+      }
+    });
+    
+    return () => unsubscribe();
+  }, [isConnected]);
+  
+  return (
+    <NetworkContext.Provider value={{ isConnected, lastConnectedAt }}>
+      {children}
+    </NetworkContext.Provider>
+  );
+};
+
+export const useNetworkStatus = () => useContext(NetworkContext);
+```
+
+2. Create a NetworkStatusIcon component that changes color based on connectivity:
+```typescript
+const NetworkStatusIcon: React.FC = () => {
+  const { isConnected } = useNetworkStatus();
+  
+  return (
+    <View style={styles.iconContainer}>
+      <Icon 
+        name="wifi" 
+        color={isConnected ? '#00FF00' : '#FF0000'} 
+        size={24} 
+      />
+    </View>
+  );
+};
+```
+
+3. Implement a NetworkAwareComponent HOC to conditionally render components based on network status
+4. Create offline mode notification banner that appears when connection is lost
+5. Implement network status persistence in Realm DB to track when the app goes offline/online
+
+# Test Strategy:
+1. Unit test network detection logic
+2. Test NetworkStatusIcon color changes
+3. Simulate network changes to verify detection works correctly
+4. Test offline notification banner appearance and dismissal
+5. Verify network status is correctly persisted in Realm DB
+6. Test NetworkAwareComponent with different network states
+7. Verify integration with the header component
+8. Test behavior when switching between offline and online modes

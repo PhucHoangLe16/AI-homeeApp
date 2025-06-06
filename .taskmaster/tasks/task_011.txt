@@ -1,0 +1,85 @@
+# Task ID: 11
+# Title: Implement Shopping List Detail Screen
+# Status: pending
+# Dependencies: 10
+# Priority: medium
+# Description: Create the Shopping List detail screen to allow users to allocate picked-up articles to specific jobs, with auto-distribution and manual adjustment capabilities.
+# Details:
+1. Create ShoppingListDetailScreen component:
+```typescript
+const ShoppingListDetailScreen: React.FC<{ articleId: string }> = ({ articleId }) => {
+  const [article, setArticle] = useState<ArticleDetail | null>(null);
+  const [jobAllocations, setJobAllocations] = useState<JobAllocation[]>([]);
+  const [totalPickedUp, setTotalPickedUp] = useState(0);
+  
+  // Load article details and job allocations
+  useEffect(() => {
+    loadArticleDetail(articleId);
+  }, [articleId]);
+  
+  const handleAutoDistribute = () => {
+    // Implement auto-distribution logic
+  };
+  
+  const handleAllocationChange = (jobId: string, quantity: number) => {
+    // Update allocation for specific job
+    // Validate total matches picked up quantity
+  };
+  
+  const handleSave = () => {
+    // Validate sum of allocations equals total picked up
+    const sum = jobAllocations.reduce((acc, job) => acc + job.quantity, 0);
+    
+    if (sum !== totalPickedUp) {
+      // Show validation error
+      return;
+    }
+    
+    // Save allocations
+  };
+  
+  return (
+    <AppLayout title="Article Detail">
+      <ArticleInfo article={article} />
+      <Button title="Auto Distribute" onPress={handleAutoDistribute} />
+      <JobAllocationList 
+        allocations={jobAllocations} 
+        onAllocationChange={handleAllocationChange} 
+      />
+      <AllocationSummary total={totalPickedUp} allocated={getAllocatedSum()} />
+      <Button title="Save" onPress={handleSave} />
+    </AppLayout>
+  );
+};
+```
+
+2. Implement ArticleInfo component to display article details
+3. Create JobAllocationList component to show jobs needing the article and allow quantity adjustment
+4. Implement AllocationSummary component to show total and allocated quantities
+5. Create auto-distribution algorithm to allocate picked-up quantity across jobs
+6. Implement validation to ensure the sum of allocations matches the picked-up total
+7. Create ShoppingListDetailService to handle article allocation operations:
+```typescript
+class ShoppingListDetailService {
+  // Get article detail with jobs
+  async getArticleDetail(articleId: string): Promise<ArticleDetail> {...}
+  
+  // Auto-distribute picked up quantity
+  autoDistributeQuantity(article: ArticleDetail): JobAllocation[] {...}
+  
+  // Save job allocations
+  async saveJobAllocations(articleId: string, allocations: JobAllocation[]): Promise<boolean> {...}
+}
+```
+
+# Test Strategy:
+1. Unit test ShoppingListDetailScreen, ArticleInfo, JobAllocationList, AllocationSummary components
+2. Test auto-distribution algorithm with various scenarios
+3. Verify allocation input validation works correctly
+4. Test validation for total allocation matching picked-up quantity
+5. Verify save functionality works correctly
+6. Test error handling for validation failures
+7. Verify data is correctly saved to local database
+8. Test synchronization of allocation data
+9. Test offline behavior for allocation operations
+10. Verify UI updates correctly when allocations change

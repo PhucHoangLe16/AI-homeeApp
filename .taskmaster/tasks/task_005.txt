@@ -1,0 +1,67 @@
+# Task ID: 5
+# Title: Create Global Application Layout
+# Status: pending
+# Dependencies: 1
+# Priority: high
+# Description: Implement the consistent main layout structure for all post-login screens, including the standard header with network status, notification, and profile icons, and the bottom navigation bar.
+# Details:
+1. Create a reusable AppLayout component:
+```typescript
+const AppLayout: React.FC<{
+  title: string;
+  children: React.ReactNode;
+}> = ({ title, children }) => {
+  const isOnline = useNetworkStatus();
+  const notifications = useNotifications();
+  
+  return (
+    <SafeAreaView style={styles.container}>
+      <Header 
+        title={title}
+        networkStatus={isOnline ? 'online' : 'offline'}
+        notificationCount={notifications.length}
+      />
+      <View style={styles.content}>{children}</View>
+      <BottomNavigation />
+    </SafeAreaView>
+  );
+};
+```
+
+2. Implement Header component with:
+   - Screen title display
+   - Network status icon (green for online, red for offline)
+   - Notification icon with optional badge
+   - Profile icon for accessing user settings
+
+3. Implement BottomNavigation component with icons for:
+   - "This Week" (Home)
+   - "Shopping List"
+   - "Task" (Job List)
+
+4. Create navigation configuration using React Navigation:
+```typescript
+const BottomTab = createBottomTabNavigator();
+
+const MainNavigator = () => (
+  <BottomTab.Navigator>
+    <BottomTab.Screen name="Home" component={HomeScreen} />
+    <BottomTab.Screen name="ShoppingList" component={ShoppingListScreen} />
+    <BottomTab.Screen name="Tasks" component={TasksScreen} />
+  </BottomTab.Navigator>
+);
+```
+
+5. Implement network status detection hook
+6. Create custom tab bar icons and styling
+7. Ensure consistent styling across different device sizes
+
+# Test Strategy:
+1. Unit test AppLayout, Header, and BottomNavigation components
+2. Test network status detection and icon color changes
+3. Verify navigation between tabs works correctly
+4. Test layout on different screen sizes and orientations
+5. Verify accessibility features work correctly
+6. Test that the header displays the correct screen title
+7. Verify profile icon navigation to profile screen
+8. Test notification icon and badge display

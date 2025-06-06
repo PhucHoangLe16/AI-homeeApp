@@ -1,0 +1,60 @@
+# Task ID: 8
+# Title: Implement Home Screen (Welcome Dashboard)
+# Status: pending
+# Dependencies: 5, 7
+# Priority: medium
+# Description: Create the primary landing page and active dashboard, allowing users to manage their Shopping List and Daily Tasks based on a selected date.
+# Details:
+1. Create HomeScreen component with week selector and tabbed view:
+```typescript
+const HomeScreen: React.FC = () => {
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [activeTab, setActiveTab] = useState('shopping'); // or from user preferences
+  
+  return (
+    <AppLayout title="Welcome">
+      <WeekSelector 
+        selectedDate={selectedDate} 
+        onDateChange={setSelectedDate} 
+      />
+      <TabSelector 
+        activeTab={activeTab} 
+        onTabChange={setActiveTab} 
+        tabs={[{ id: 'shopping', label: 'Shopping List' }, { id: 'tasks', label: 'Tasks' }]} 
+      />
+      {activeTab === 'shopping' ? (
+        <HomeShoppingList date={selectedDate} />
+      ) : (
+        <HomeTasks date={selectedDate} />
+      )}
+    </AppLayout>
+  );
+};
+```
+
+2. Implement WeekSelector component with day buttons for the current week
+3. Create TabSelector component for switching between Shopping List and Tasks views
+4. Implement HomeShoppingList component:
+   - Display articles by pickup status
+   - Show interactive elements for navigation
+   - Support expanding/collapsing picked-up items (purple border)
+
+5. Implement HomeTasks component:
+   - List jobs for the selected date
+   - Show visual cues for offline-ready jobs (dashed green border, disconnected network icon)
+   - Add navigation to job details
+
+6. Create automatic content update mechanism when date selection or app settings change
+7. Implement user preference for default tab (shopping or tasks)
+
+# Test Strategy:
+1. Unit test HomeScreen, WeekSelector, TabSelector components
+2. Test date selection and week navigation
+3. Verify tab switching works correctly
+4. Test HomeShoppingList displays correct data for selected date
+5. Test HomeTasks displays correct jobs for selected date
+6. Verify visual indicators for offline-ready jobs
+7. Test expanding/collapsing picked-up items
+8. Verify content updates when date selection changes
+9. Test content updates when app settings change
+10. Verify default tab selection based on user preferences

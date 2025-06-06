@@ -1,0 +1,89 @@
+# Task ID: 12
+# Title: Implement Task List Screen
+# Status: pending
+# Dependencies: 5, 7
+# Priority: high
+# Description: Create the Task List screen to display jobs by type (Inspection, Maintenance, Cleaning), with filtering capabilities and visual indicators for job status.
+# Details:
+1. Create TaskListScreen component with tabs for job types:
+```typescript
+const TaskListScreen: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('inspection');
+  const [dateRange, setDateRange] = useState({ start: new Date(), end: new Date() });
+  const [location, setLocation] = useState<string | null>(null);
+  const [subType, setSubType] = useState<string | null>(null);
+  const [showCompleted, setShowCompleted] = useState(false);
+  const [jobs, setJobs] = useState<Job[]>([]);
+  
+  // Load jobs based on filters
+  useEffect(() => {
+    loadJobs(activeTab, dateRange, location, subType, showCompleted);
+  }, [activeTab, dateRange, location, subType, showCompleted]);
+  
+  return (
+    <AppLayout title="Tasks">
+      <TabSelector 
+        activeTab={activeTab} 
+        onTabChange={setActiveTab} 
+        tabs={[
+          { id: 'inspection', label: 'Inspection' },
+          { id: 'maintenance', label: 'Maintenance' },
+          { id: 'cleaning', label: 'Cleaning' }
+        ]} 
+      />
+      <FilterSection 
+        dateRange={dateRange}
+        onDateRangeChange={setDateRange}
+        location={location}
+        onLocationChange={setLocation}
+        subType={subType}
+        onSubTypeChange={setSubType}
+        showCompleted={showCompleted}
+        onShowCompletedChange={setShowCompleted}
+      />
+      <JobList 
+        jobs={jobs} 
+        onJobPress={navigateToJobDetail} 
+      />
+      {(activeTab === 'maintenance' || activeTab === 'cleaning') && (
+        <FloatingActionButton icon="plus" onPress={navigateToCreateTask} />
+      )}
+    </AppLayout>
+  );
+};
+```
+
+2. Implement TabSelector component for job type tabs
+3. Create FilterSection component with date range, location, sub-type filters, and completed jobs toggle
+4. Implement JobList component with visual indicators:
+   - Completed jobs (green border, checkmark)
+   - Offline-ready jobs (dashed green border, disconnected network icon)
+
+5. Create TaskService to handle job operations:
+```typescript
+class TaskService {
+  // Get jobs based on filters
+  async getJobs(type: string, filters: JobFilters): Promise<Job[]> {...}
+  
+  // Mark job as offline-ready (cache for offline use)
+  async markJobOfflineReady(jobId: string): Promise<boolean> {...}
+  
+  // Check if job is available offline
+  async isJobOfflineReady(jobId: string): Promise<boolean> {...}
+}
+```
+
+6. Implement FloatingActionButton for creating new Maintenance/Cleaning tasks
+7. Create navigation to job detail and task creation screens
+
+# Test Strategy:
+1. Unit test TaskListScreen, TabSelector, FilterSection, JobList components
+2. Test tab switching between job types
+3. Verify filter functionality for date range, location, and sub-type
+4. Test toggle for showing/hiding completed jobs
+5. Verify visual indicators for completed and offline-ready jobs
+6. Test navigation to job detail works correctly
+7. Verify FloatingActionButton appears only for Maintenance/Cleaning tabs
+8. Test navigation to task creation screen
+9. Verify jobs are loaded correctly based on filters
+10. Test offline behavior for job list operations

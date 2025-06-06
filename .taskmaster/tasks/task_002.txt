@@ -1,0 +1,48 @@
+# Task ID: 2
+# Title: Implement Realm Database Integration
+# Status: pending
+# Dependencies: 1
+# Priority: high
+# Description: Set up and configure Realm Database for local data storage and offline capabilities, including schema definitions for all required data models.
+# Details:
+1. Install Realm dependencies:
+```bash
+npm install realm @realm/react
+```
+2. Define Realm schemas for all data models mentioned in the PRD:
+```typescript
+// Example schema for User model
+class User extends Realm.Object {
+  static schema = {
+    name: 'User',
+    primaryKey: 'id',
+    properties: {
+      id: 'string',
+      username: 'string',
+      firstName: 'string',
+      lastName: 'string',
+      email: 'string?',
+      phone: 'string?',
+      gender: 'string?',
+      role: 'string',
+      tenantId: 'string?',
+      settings: 'UserSettings?',
+      lastSyncTimestamp: 'date'
+    }
+  };
+}
+```
+3. Create similar schemas for: Job/Task, InspectionPoint, Article, ShoppingList, Location, Unit/SubUnit, Template, Warehouse, CostLine, FollowUpAction
+4. Implement RealmContext provider for React components
+5. Create database service with CRUD operations for each model
+6. Implement database initialization and migration strategies
+7. Setup encryption for sensitive data
+
+# Test Strategy:
+1. Unit test each schema definition for correctness
+2. Test CRUD operations for each model
+3. Verify relationships between models work correctly
+4. Test database initialization and migration
+5. Benchmark performance with large datasets
+6. Verify encryption works correctly for sensitive data
+7. Test database operations in offline mode

@@ -1,0 +1,73 @@
+# Task ID: 9
+# Title: Implement User Profile Management
+# Status: pending
+# Dependencies: 4, 7
+# Priority: medium
+# Description: Create the user profile management screens to allow users to view and edit their personal information, manage application settings, and update their account password.
+# Details:
+1. Create ProfileScreen with tabbed interface:
+```typescript
+const ProfileScreen: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('details');
+  
+  return (
+    <AppLayout title="Profile">
+      <TabSelector 
+        activeTab={activeTab} 
+        onTabChange={setActiveTab} 
+        tabs={[{ id: 'details', label: 'Details' }, { id: 'password', label: 'Password' }]} 
+      />
+      {activeTab === 'details' ? (
+        <ProfileDetailsTab />
+      ) : (
+        <PasswordChangeTab />
+      )}
+    </AppLayout>
+  );
+};
+```
+
+2. Implement ProfileDetailsTab component:
+   - Display user information (name, contact, gender)
+   - Allow editing editable fields
+   - Show read-only fields (username, roles)
+   - Include app settings (default home tab, photo storage)
+   - Add "Save Changes" button
+
+3. Implement PasswordChangeTab component:
+   - Create form for current password, new password, confirm password
+   - Implement password complexity validation
+   - Add "Change Password" button
+
+4. Create UserProfileService to handle profile operations:
+```typescript
+class UserProfileService {
+  // Get user profile from local database
+  async getUserProfile(): Promise<UserProfile> {...}
+  
+  // Update user profile locally and queue for sync
+  async updateUserProfile(updates: Partial<UserProfile>): Promise<boolean> {...}
+  
+  // Update user settings locally
+  async updateUserSettings(settings: UserSettings): Promise<boolean> {...}
+  
+  // Change password (requires online connection)
+  async changePassword(currentPassword: string, newPassword: string): Promise<boolean> {...}
+}
+```
+
+5. Implement success messages for profile updates and password changes
+6. Create logout functionality
+7. Handle offline vs. online behavior for profile operations
+
+# Test Strategy:
+1. Unit test ProfileScreen, ProfileDetailsTab, PasswordChangeTab components
+2. Test form validation for profile editing
+3. Test password complexity validation
+4. Verify read-only fields cannot be edited
+5. Test saving profile changes works correctly
+6. Verify password change functionality works with the authentication service
+7. Test success messages appear correctly
+8. Verify logout functionality works
+9. Test offline behavior for profile operations
+10. Verify user settings are correctly saved and applied

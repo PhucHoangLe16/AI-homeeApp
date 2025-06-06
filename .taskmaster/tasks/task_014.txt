@@ -1,0 +1,120 @@
+# Task ID: 14
+# Title: Implement Perform Job Screen
+# Status: pending
+# Dependencies: 13
+# Priority: high
+# Description: Create the Perform Job screen to guide users through executing a job, including unit/sub-unit selection and inspection point management.
+# Details:
+1. Create PerformJobScreen component:
+```typescript
+const PerformJobScreen: React.FC<{ jobId: string }> = ({ jobId }) => {
+  const [job, setJob] = useState<JobDetail | null>(null);
+  const [selectedUnit, setSelectedUnit] = useState<string | null>(null);
+  const [points, setPoints] = useState<InspectionPoint[]>([]);
+  const [progress, setProgress] = useState(0);
+  
+  // Load job details and points
+  useEffect(() => {
+    loadJobAndPoints(jobId);
+  }, [jobId]);
+  
+  // Update points when unit changes
+  useEffect(() => {
+    if (selectedUnit) {
+      loadPointsForUnit(jobId, selectedUnit);
+    }
+  }, [selectedUnit]);
+  
+  // Calculate progress
+  useEffect(() => {
+    if (job) {
+      const completedPoints = job.totalCompletedPoints || 0;
+      const totalPoints = job.totalPoints || 1;
+      setProgress(completedPoints / totalPoints);
+    }
+  }, [job]);
+  
+  const handleUnitChange = (unitId: string) => {
+    setSelectedUnit(unitId);
+  };
+  
+  const handlePointUpdate = (pointId: string, updates: Partial<InspectionPoint>) => {
+    // Update point locally
+  };
+  
+  const handleSave = async () => {
+    // Save progress locally
+  };
+  
+  const handleComplete = () => {
+    // Navigate to job summary
+  };
+  
+  return (
+    <AppLayout title="Perform Job">
+      <ProgressBar value={progress} />
+      <UnitSelector 
+        units={job?.units || []} 
+        selectedUnit={selectedUnit} 
+        onUnitChange={handleUnitChange} 
+      />
+      <InspectionPointList 
+        points={points} 
+        onPointUpdate={handlePointUpdate} 
+      />
+      <ButtonRow>
+        <Button title="Save" onPress={handleSave} />
+        <Button title="Complete" onPress={handleComplete} />
+      </ButtonRow>
+    </AppLayout>
+  );
+};
+```
+
+2. Implement ProgressBar component to show completion progress
+3. Create UnitSelector component with visual indicators for completed units (green checkmarks)
+4. Implement InspectionPointList component to display and manage points
+5. Create InspectionPointItem component with:
+   - Status selection (Green/Orange/Red)
+   - Description input
+   - Photo capture/management (up to 8 photos)
+   - Cost input
+   - Follow-up action creation
+
+6. Implement PerformJobService to handle job execution:
+```typescript
+class PerformJobService {
+  // Get job details with units and points
+  async getJobWithPoints(jobId: string): Promise<JobDetail> {...}
+  
+  // Get points for specific unit
+  async getPointsForUnit(jobId: string, unitId: string): Promise<InspectionPoint[]> {...}
+  
+  // Update inspection point
+  async updateInspectionPoint(jobId: string, pointId: string, updates: Partial<InspectionPoint>): Promise<boolean> {...}
+  
+  // Save job progress
+  async saveJobProgress(jobId: string): Promise<boolean> {...}
+  
+  // Check if job can be completed
+  async canCompleteJob(jobId: string): Promise<{canComplete: boolean, reason?: string}> {...}
+}
+```
+
+7. Implement photo capture and management functionality
+8. Create cost input component with validation
+9. Implement follow-up action creation UI
+
+# Test Strategy:
+1. Unit test PerformJobScreen, ProgressBar, UnitSelector, InspectionPointList, InspectionPointItem components
+2. Test unit selection and point loading
+3. Verify progress calculation and display
+4. Test point status updates (Green/Orange/Red)
+5. Verify description input works correctly
+6. Test photo capture, display, and deletion
+7. Verify cost input and validation
+8. Test follow-up action creation
+9. Verify save functionality works correctly
+10. Test navigation to job summary
+11. Verify offline behavior for job execution
+12. Test role-based access control (e.g., coworker restrictions)

@@ -1,0 +1,97 @@
+# Task ID: 7
+# Title: Implement Data Synchronization Service
+# Status: pending
+# Dependencies: 2, 6
+# Priority: high
+# Description: Create a service to handle synchronization of data between the local Realm database and the external system, including automatic sync every 30 minutes when online.
+# Details:
+1. Create a SyncService class to manage data synchronization:
+```typescript
+class SyncService {
+  private syncInterval: NodeJS.Timeout | null = null;
+  private readonly SYNC_INTERVAL_MS = 30 * 60 * 1000; // 30 minutes
+  
+  constructor(private networkService: NetworkService, private apiClient: ApiClient) {}
+  
+  // Start automatic sync when app is online
+  public startAutoSync(): void {
+    if (this.syncInterval) {
+      clearInterval(this.syncInterval);
+    }
+    
+    this.syncInterval = setInterval(() => {
+      if (this.networkService.isConnected()) {
+        this.syncAll();
+      }
+    }, this.SYNC_INTERVAL_MS);
+    
+    // Also sync immediately if online
+    if (this.networkService.isConnected()) {
+      this.syncAll();
+    }
+  }
+  
+  // Stop automatic sync
+  public stopAutoSync(): void {
+    if (this.syncInterval) {
+      clearInterval(this.syncInterval);
+      this.syncInterval = null;
+    }
+  }
+  
+  // Manually trigger sync
+  public async syncAll(): Promise<SyncResult> {
+    try {
+      // 1. Upload local changes first
+      await this.uploadLocalChanges();
+      
+      // 2. Download updates from server
+      await this.downloadServerUpdates();
+      
+      // 3. Update last sync timestamp
+      await this.updateSyncTimestamp();
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Sync failed:', error);
+      return { success: false, error };
+    }
+  }
+  
+  // Upload changes made locally to the server
+  private async uploadLocalChanges(): Promise<void> {
+    // Get all local changes since last sync from Realm DB
+    // Upload each entity type (tasks, articles, etc.)
+  }
+  
+  // Download updates from server
+  private async downloadServerUpdates(): Promise<void> {
+    // Get updates for each entity type
+    // Update local Realm DB
+  }
+  
+  // Update sync timestamp in local storage
+  private async updateSyncTimestamp(): Promise<void> {
+    // Store current timestamp as last successful sync
+  }
+}
+```
+
+2. Implement entity-specific sync methods for each data model (User, Job/Task, Article, etc.)
+3. Create conflict resolution strategies for each data type
+4. Implement sync queue for failed uploads to retry when connection is restored
+5. Add sync status indicators and progress reporting
+6. Create background sync task using react-native-background-fetch
+7. Implement sync event listeners for UI updates
+
+# Test Strategy:
+1. Unit test SyncService methods
+2. Test automatic sync interval timing
+3. Verify sync works correctly when manually triggered
+4. Test conflict resolution strategies with simulated conflicts
+5. Verify sync queue handles failed uploads correctly
+6. Test sync behavior when switching between offline and online modes
+7. Verify background sync works correctly
+8. Test sync with large datasets
+9. Verify sync status indicators update correctly
+10. Test sync event listeners trigger UI updates

@@ -1,0 +1,102 @@
+# Task ID: 17
+# Title: Implement Task Creation Workflow
+# Status: pending
+# Dependencies: 12
+# Priority: medium
+# Description: Create the two-step workflow for creating new Maintenance and Cleaning tasks, including general job information and template application for job points.
+# Details:
+1. Create CreateTaskScreen component with step indicator:
+```typescript
+const CreateTaskScreen: React.FC<{ type: 'maintenance' | 'cleaning' }> = ({ type }) => {
+  const [step, setStep] = useState(1);
+  const [taskData, setTaskData] = useState<NewTaskData>({ type });
+  
+  const handleStep1Complete = (data: Step1Data) => {
+    setTaskData({ ...taskData, ...data });
+    setStep(2);
+  };
+  
+  const handleStep2Complete = (data: Step2Data) => {
+    setTaskData({ ...taskData, ...data });
+    createTask(taskData);
+  };
+  
+  const handleBack = () => {
+    if (step === 2) {
+      setStep(1);
+    } else {
+      // Navigate back to task list
+    }
+  };
+  
+  return (
+    <AppLayout title={`Create ${type.charAt(0).toUpperCase() + type.slice(1)} Task`}>
+      <StepIndicator currentStep={step} totalSteps={2} />
+      
+      {step === 1 ? (
+        <CreateTaskStep1 
+          initialData={taskData} 
+          onComplete={handleStep1Complete} 
+        />
+      ) : (
+        <CreateTaskStep2 
+          taskData={taskData} 
+          onComplete={handleStep2Complete} 
+        />
+      )}
+      
+      <Button title="Back" onPress={handleBack} />
+    </AppLayout>
+  );
+};
+```
+
+2. Implement CreateTaskStep1 component for general job information:
+   - Location selection
+   - Unit selection
+   - Date selection
+   - Estimated hours input
+
+3. Create CreateTaskStep2 component for template application:
+   - Template selection
+   - Point configuration
+   - Unit modification handling
+
+4. Implement TaskCreationService to handle task creation:
+```typescript
+class TaskCreationService {
+  // Get available locations
+  async getLocations(): Promise<Location[]> {...}
+  
+  // Get units for location
+  async getUnits(locationId: string): Promise<Unit[]> {...}
+  
+  // Get available templates
+  async getTemplates(type: 'maintenance' | 'cleaning'): Promise<Template[]> {...}
+  
+  // Apply template to task
+  async applyTemplate(taskData: NewTaskData, templateId: string): Promise<TaskWithPoints> {...}
+  
+  // Create new task
+  async createTask(taskData: NewTaskData): Promise<{success: boolean, taskId?: string}> {...}
+}
+```
+
+5. Implement template application logic with handling for "rainy case" scenarios
+6. Create unit modification handling with warnings
+7. Implement validation for task creation (e.g., tasks without points)
+8. Create success message for task creation
+
+# Test Strategy:
+1. Unit test CreateTaskScreen, CreateTaskStep1, CreateTaskStep2 components
+2. Test step navigation (forward and back)
+3. Verify location and unit selection works correctly
+4. Test date selection and estimated hours input
+5. Verify template selection and application
+6. Test point configuration and management
+7. Verify unit modification handling and warnings
+8. Test validation for task creation
+9. Verify success message appears after creation
+10. Test offline behavior for task creation
+11. Verify data is correctly saved to local database
+12. Test synchronization of created task data

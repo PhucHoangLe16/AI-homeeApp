@@ -1,0 +1,336 @@
+HomEE Mobile Application: Product Requirements Document
+
+Overview
+The HomEE mobile application is an integral part of the broader HomEE ecosystem, designed to support organizations that provide specialized housing and accommodation solutions.    
+
+The primary problem the HomEE mobile app solves is the need for field-based employees of these organizations to manage their assigned tasks with high efficiency, maintain organizational coherence in their daily operations, and deliver their services effectively and with ease.    
+
+It is for employees of organizations specializing in tailored housing and accommodation solutions for other businesses and their respective employees.  These users are typically field-based personnel responsible for tasks such as inspections, maintenance, cleaning, and managing related logistics like shopping lists.    
+
+The HomEE mobile app is valuable because it empowers these mobile employees by providing a dedicated tool for task management, detailed job performance tracking in varied locations, and robust offline capabilities. It is designed to interact with a broader HomEE platform for data synchronization and administrative functions, acting as a critical extension for personnel operating on-site.  This focus on field operations enhances productivity, improves data accuracy from the field, and supports service delivery even in areas with poor connectivity.    
+
+This document defines the functional and non-functional requirements for the HomEE mobile application, serving as the authoritative guide for its design, development, and testing. It covers mobile application-specific features, UI/UX, workflows, offline capabilities, and user case behaviors. Details of any external or server-side systems are out of scope for this mobile-focused PRD, except to acknowledge the mobile app's need for data exchange.    
+
+Core Features
+
+The HomEE mobile application includes several core features designed to meet the needs of its field-based users:
+
+Authentication Workflow
+What it does: Securely authenticates users via an external system, manages access for single and multi-tenant configurations, and handles initial password setup for accounts created by administrators. 
+Why it's important: Ensures that only authorized personnel can access the application and its data, protecting sensitive information and tailoring the user experience based on organizational structure.
+How it works at a high level: A multi-step process involving username input, tenant selection (for multi-tenant users), and password input, all validated against an external authentication service. A separate flow exists for user who not change your password after 6 months to reset their password, enforcing complexity rules.  The UI maintains a consistent two-section layout for all authentication screens.    
+
+Global Application Interface (Post-Login)
+What it does: Provides a consistent main layout structure for all screens after login, including a standard header and bottom navigation bar. 
+Why it's important: Offers a predictable and easy-to-learn interface, facilitating navigation and improving overall usability for field personnel who need to access information quickly.
+How it works at a high level:
+Header: Displays the current screen title, a dynamic network status icon (green for online, red for offline), a notification icon, and a profile icon for accessing user settings. 
+Bottom Navigation Bar: Contains icons for quick access to "This Week (Home)," "Shopping List," and "Task" (Job List) sections.    
+
+Offline Mode and Data Synchronization
+What it does: Enables users to continue performing key tasks, access previously viewed data, and save new information to a local device database when an internet connection is unavailable. Automatically synchronizes local data with an external system upon reconnection. 
+Why it's important: Critical for field employees who may work in areas with intermittent or no connectivity, ensuring productivity is not hampered and data is not lost.
+How it works at a high level: The app visually indicates offline status. Access to tasks/jobs and "Perform Job" related pages offline depends on prior online access and local caching.  Data saving offline is supported for most actions, with specific restrictions for "additional" articles (from Van/Location) which require online connection to save changes, likely to maintain external inventory integrity.  Synchronization occurs automatically every 30 minutes when online.    
+
+Home Screen ("Welcome" Dashboard)
+What it does: Serves as the primary landing page and active dashboard, allowing users to manage their "Shopping List" and "Daily Tasks" based on a selected date, using locally cached or synchronized data. 
+Why it's important: Provides a quick overview of pending work and required materials, enabling users to efficiently plan and execute their daily activities.
+How it works at a high level: Features a week selector to filter content by date. Displays either "Shopping List" (default) or "Task" information in tabbed views.  The Shopping List tab shows articles by pickup status with interactive elements for navigation or detail expansion.  The Task tab lists jobs for the selected date, with visual cues for offline-ready jobs and direct navigation to job details.  Content updates automatically based on date selection or app setting changes.    
+
+User Profile Management
+What it does: Allows users to view their personal information (retrieved via synchronization), manage certain application settings (like default Home screen tab and photo storage), and update their account password (which requires communication with an external authentication system). 
+Why it's important: Provides users with control over their account details and app preferences, enhancing personalization and security.
+How it works at a high level: Accessed via a profile icon in the header. Features a "Details" tab for viewing/editing profile information (name, contact, gender) and settings, and a "Password" tab for changing the account password with security validations.  Some information like username and assigned roles are read-only as they are managed externally.    
+
+Shopping List Feature
+What it does: Helps users manage articles required for their jobs, including viewing consolidated lists (based on synchronized job data), filtering by date/warehouse/type, inputting picked-up quantities, allocating items to specific jobs, and marking shopping lists as complete. All data is stored locally and synchronized. 
+Why it's important: Streamlines the process of gathering necessary materials, ensuring jobs are well-equipped and inventory is tracked accurately.
+How it works at a high level:
+Overview Screen: Displays reserved articles aggregated for the main worker, with filters and an input for "picked up" quantity. A "Confirm" button finalizes pickup, with warnings if not all items are collected. 
+Detail Screen: Accessed by clicking an article on the overview. Lists jobs needing that article, allowing auto-distribution and manual adjustment of picked-up quantities per job. Strict validation ensures the sum matches the overview total before saving locally.    
+
+Task Management Features
+What it does: Enables users to view their assigned jobs (Inspections, Maintenance, Cleaning) from synchronized data, filter them by various criteria, create new Maintenance and Cleaning tasks locally (for later synchronization), and manage task points using templates (potentially cached locally or fetched). 
+Why it's important: Provides a central hub for all job-related activities, from planning and creation (for certain types) to execution.
+How it works at a high level:
+Job List Screen ("Tasks"): Displays jobs in tabs by type, with filters (date range, location, inspection sub-type) and a toggle for completed jobs. Visual indicators for completed and offline-ready jobs. 
+Create New Task (Maintenance/Cleaning): A two-step workflow. Step 1 captures general job info (location, unit, date, estimated hours).  Step 2 involves applying "general" templates to define job points, with complex logic for point management and handling various "rainy case" scenarios during template application and unit modification.    
+
+Job Execution and Reporting Workflow
+What it does: Guides users through the process of performing a job, from viewing detailed information and needed articles, to executing inspection/task points, managing used/returned/broken articles (all recorded locally), and finally summarizing and submitting the completed job (for synchronization). 
+Why it's important: Ensures comprehensive data capture during fieldwork, supports accurate reporting, and facilitates efficient inventory management related to job execution.
+How it works at a high level:
+Job Detail Access (Pre-Execution): Multi-page view of General info, Location details, and Needed Articles before starting. 
+Performing a Job ("Tasks" screen): Users select units/sub-units and review/update individual inspection points (status, description, photos, costs to bill, follow-up actions). A progress bar tracks completion. 
+Article Management: Separate screens for "Used articles," "Returned articles," and "Broken articles," allowing detailed tracking of items from the job, location, or van, with specific validation and offline save rules. 
+Job Summary and Submission: A final review screen with expandable sections for results, time spent, all article types, expenditures, follow-up actions, and general feedback, before submitting the job.    
+
+Role-Based Functionality and Special Cases
+What it does: Adapts application behavior and UI based on the user's role (e.g., "coworker" - determined from synchronized user data) or the job's status (e.g., "Reviewer rejected job" - updated via synchronization). 
+Why it's important: Ensures users only access appropriate functionalities and data, maintaining operational integrity and security.
+How it works at a high level:
+Reviewer rejected job: Users can view and restart rejected jobs but have restrictions on editing articles "from job." 
+Coworker Role: Coworkers can view job details but cannot start jobs. They have view-only access to "Perform Job" and "Summary" pages but can edit their "Actual hours."    
+
+User Experience
+
+User Personas
+The primary users of the HomEE mobile application are employees of organizations specializing in providing tailored housing and accommodation solutions for other businesses and their respective employees.  These users are typically:
+Field-based personnel: Operating on-site at various properties.
+Task-oriented: Responsible for inspections, maintenance, cleaning.
+Logistics-involved: Managing shopping lists and articles required for jobs.
+Mobile-dependent: Relying on the application for information and data entry in diverse environments, potentially with limited network connectivity.   
+
+Key User Flows
+The application supports several key user journeys:
+
+Authentication & Onboarding: User logs in with username and password (handling single/multi-tenant). User not change their password after 6 months, reset their password.    
+Daily Operations & Planning (via Home Screen): User views daily shopping list requirements for a selected date.  User views assigned tasks for a selected date.  User navigates to detailed shopping list or task management screens.    
+Profile and Settings Management: User views and updates their profile information (contact details, etc.).  User changes their account password.  User configures app preferences (default home tab, photo storage).    
+Shopping List Management: User filters and views aggregated shopping list items.  User inputs quantities of articles picked up.  User allocates picked-up articles to specific jobs.  User confirms completion of a shopping list pickup cycle.    
+Task Creation (Maintenance/Cleaning only): User initiates new task creation from the relevant job list tab.  User inputs general job details (location, units, date, estimated time).  User applies templates and configures/manages specific job points.  User finalizes and "opens" the new task.    
+Job Execution & Reporting: User selects a job from the Job List and reviews its general, location, and needed article details.  User "starts" the job and navigates through units/sub-units to perform tasks.  For each task point: reviews status, adds descriptions, takes photos, logs costs, creates follow-up actions.  User manages articles: records used, returned, and broken items, distinguishing source (job, location, van).  User reviews a comprehensive job summary.  User submits the completed job.    
+Offline Usage: User continues to access previously viewed tasks/jobs and perform/save work locally when network is unavailable.  App automatically syncs data when connection is restored.    
+UI/UX Considerations
+The application design prioritizes ease of use and efficiency for field personnel:
+Consistent Layout: A standardized main application layout post-login, featuring a persistent header (screen title, network status, notification, profile icons) and a bottom navigation bar (This Week, Shopping List, Task icons), ensures predictability.  Authentication screens also follow a consistent two-section layout. 
+Clear Visual Cues:
+Network Status: Indicated by a color-changing icon (green for online, red for offline). 
+Job Status: Visual distinctions for completed jobs (green border, checkmark) and offline-ready jobs (dashed green border, disconnected network icon). 
+Review Codes: Color-coded status indicators (Green, Orange, Red) for inspection points. 
+Shopping List: Purple border for expanded "picked up" articles on the Home screen. 
+Interactive Feedback:
+Success messages for operations like profile updates, password changes, shopping list completion, task creation, and data saving. 
+Warning pop-ups for critical actions or potential issues (e.g., completing shopping list with uncollected items, creating tasks without points, removing units with no points). 
+Validation messages for incorrect or missing input. 
+Input Efficiency: Utilization of standard mobile UI elements like dropdowns, calendar pickers, toggle switches, and numeric inputs with clear validation rules. 
+Role-Based and Status-Driven Interface: The UI dynamically adapts by showing/hiding buttons or restricting actions based on the user's role (e.g., "coworker") or the current status of a job (e.g., "Reviewer rejected job", "completed").  This ensures users only see relevant options.
+Progress Indication:
+A progress bar on the "Perform Job" screen shows (points completed / total points). 
+Green checkmarks next to units in the selection dropdown indicate all points within that unit are completed. 
+Offline Experience: Clear indication of offline mode and specific messaging when actions cannot be performed or data cannot be accessed/saved due to lack of connectivity or prior online access. 
+Information Density Management: Expandable/collapsible sections are used in screens like the Job Summary and Home screen (for picked-up articles) to manage large amounts of information effectively.  Scrollable lists are used where pagination is not implemented (e.g., Job List).    
+
+Technical Architecture
+
+This section outlines the technical implementation details specific to the HomEE mobile application.
+
+System Components
+The primary components of the HomEE mobile solution are:
+HomEE Mobile Application: The client-side application for iOS and Android devices, used by field employees. It will be developed using React Native CLI (with TypeScript). It encompasses the user interface (UI), business logic for mobile-specific operations, and local data management. 
+Local Device Database: An on-device database, specifically Realm DB, will be utilized by the mobile application to store data necessary for offline access, user-generated content, and pending synchronization. This includes task details, job progress, user inputs, and cached master data.    
+
+The mobile application will need to communicate with external systems (not detailed in this mobile-only PRD) for functions such as user authentication, data synchronization, and fetching master data lists (e.g., articles, locations, templates).
+
+Data Models (Mobile Perspective)
+The mobile application will manage and locally store data pertaining to the following key entities using Realm DB. This data is typically synchronized with an external system to ensure consistency and provide necessary operational information.
+User: Credentials for local authentication, user profile information (name, contact, gender), locally relevant settings (e.g., default home tab, photo storage preference). 
+Job/Task: Details of assigned jobs including identifier, title, type (Inspection, Maintenance, Cleaning), status, location, assigned units/sub-units, relevant dates, estimated/actual hours, internal instructions, and associated photos/data captured during execution. 
+Inspection/Task Point: Specific points within a job, including title, description/findings, review status, associated photos, logged costs, and follow-up actions created on the mobile device. 
+Article: Information about articles relevant to jobs, including identifier, description, category, and quantities (reserved, collected, used, returned, broken) as managed and updated by the mobile user. This includes articles from job allocations, location stock, or van stock. 
+Shopping List: Locally managed shopping lists based on date and worker, including articles needed and their pickup status as recorded by the user. 
+Location & Unit/Sub-unit: Data representing the structure of job sites, necessary for task assignment and navigation within the app. 
+Template: Information about "Inspection templates" and "General templates" if parts of these are cached locally for creating new tasks or applying points offline. 
+Warehouse/Storage (Van): Identifiers for Van storage locations if articles are being tracked from/to them directly on mobile. 
+Cost Line: Cost details (description, cost per item, quantity) entered by the user on the mobile app. 
+Follow-up Action: Follow-up actions (description, photos) created by the user on the mobile app.    
+
+Mobile Data Exchange and Synchronization Needs
+For its operation, the HomEE mobile application will require mechanisms to exchange data with an external system. These exchanges are crucial for:
+User Authentication: Verifying user credentials against a central authority during login. 
+Data Synchronization:
+Uploading Mobile-Generated Data: Transmitting data created or modified on the mobile device (e.g., job progress, completed inspection points, photos, article usage, newly created tasks, profile updates) from the local Realm DB to the external system. 
+Downloading Updates and Master Data: Receiving updates such as new job assignments, changes in job statuses, and potentially updated master data lists (e.g., new articles, locations, users, templates) into the local Realm DB to ensure the mobile app has current information, especially for offline use. 
+Fetching Operational Data: Requesting specific datasets required for app functionality if not already available locally or fully synced, such as lists of available locations, articles from a specific van, or available templates during task creation. 
+Real-time Validations (where necessary): For certain operations, like saving changes to "additional" articles sourced from a shared inventory (e.g., Van stock), the mobile app may need to perform real-time checks with an external system to ensure data integrity.    
+
+Development Roadmap
+
+This roadmap outlines potential phases for developing the HomEE mobile application, focusing on delivering value incrementally.
+
+Phase 1: MVP (Minimum Viable Product) - Core Task Viewing and Basic Execution
+Goal: Allow users to log in, view their assigned tasks, perform basic task actions, and have essential offline viewing.
+Requirements:
+Authentication: Username/Password login (single-tenant focus for MVP).  Basic Profile Icon navigation to a read-only profile view.
+Global Layout: Basic Header (Title, Network Status Icon) and Bottom Navigation (Task icon active). 
+Job List ("Tasks"): Display assigned jobs (one type, e.g., Inspection) with essential details (Title, ID, Location).  No advanced filtering initially. Default sorting.
+Job Detail (Pre-Execution): View General Info, Location, Needed Articles (read-only). 
+Perform Job (Basic):
+Navigate Units/Sub-units. 
+View Inspection Points (Title). 
+Update Review Status (Green/Orange/Red) for points. 
+"Save" button to save progress locally to Realm DB. 
+Offline Mode (Basic):
+View tasks/job details if accessed online previously (from Realm DB). 
+Save basic job progress (point status) locally to Realm DB. 
+Manual sync trigger or basic auto-sync on reconnect.   
+
+Phase 2: Enhanced Task Execution and Core Shopping List
+Goal: Expand job execution capabilities and introduce core shopping list functionality.
+Requirements:
+Perform Job (Enhanced):
+Add Description to inspection points (with conditional requirement). 
+Take/attach Photos (up to 8 per point), basic view/delete (manage local storage and prepare for sync). 
+Progress Bar. 
+Home Screen (Basic): Introduce "Welcome" screen with Week Selector and basic Task tab view. 
+Shopping List (Overview - MVP):
+Display aggregated articles for selected date (from Home screen, data from Realm DB). 
+Input "Picked Up" quantity (basic validation, save to Realm DB). 
+"Complete" button (basic confirmation, no complex warnings yet). 
+User Profile (Basic Edit): Allow editing of some fields (e.g., First/Last Name, Phone), save to Realm DB.  "Save Changes" button.
+Offline Mode (Enhanced): More robust local saving to Realm DB for new data types (descriptions, photo metadata).   
+
+Phase 3: Full Feature Set for Job Management and Articles
+Goal: Implement comprehensive job execution, article management, and task creation.
+Requirements:
+Perform Job (Full):
+"Cost to bill" functionality (save to Realm DB). 
+"Follow up action" functionality (save to Realm DB). 
+Article Management:
+"Used article" screen (including "Additional used article" from Van, with online save restriction for additional, otherwise save to Realm DB). 
+"Returned article" screen (from Job & Location, with online save restriction for additional, otherwise save to Realm DB). 
+"Broken article" screen (from Job & Location, with online save restriction for additional, otherwise save to Realm DB). 
+Job Summary & Submission: Full summary screen with all expandable sections and "Submit" functionality (mark ready in Realm DB for sync). 
+Task Management (Job List):
+All tabs (Inspection, Maintenance, Cleaning). 
+Full filtering capabilities (on data in Realm DB). 
+"Show completed jobs" toggle and visual cues. 
+Create New Task (Maintenance/Cleaning):
+Step 1: General job information (save to Realm DB). 
+Step 2: Template application and point configuration (including all "rainy case" logic, save to Realm DB).    
+
+Phase 4: Advanced Features, Roles, and Polish
+Goal: Implement multi-tenancy, full role-based access, notifications, and refine overall UX.
+Requirements:
+Authentication: Multi-tenant support, Select Tenant page.  Admin-initiated Password Reset flow. 
+User Profile (Full): Password update, all settings (default home tab, photo storage).  Logout.
+Home Screen (Full): Full Shopping List tab functionality (expand/collapse picked-up items, navigation).  Automatic updates on settings/language changes.
+Shopping List (Full): Detail screen for allocating articles to jobs, with autofill and strict validation (data in Realm DB).  Full "Complete" button logic with conditional warnings.
+Offline Mode (Full): All specified offline behaviors, including nuanced save restrictions and reliable auto-sync (daily, 30 mins) with Realm DB as the source. 
+Special Cases: Implement logic for Reviewer "Rejected" jobs and "Coworker" role restrictions based on synced data in Realm DB. 
+Notifications: Implement Notification Icon functionality (details TBD based on further requirements). 
+UI/UX Polish: Address all non-functional requirements (usability, performance, security, data integrity).  Comprehensive testing with React Native and Realm DB specifics.   
+
+Logical Dependency Chain
+
+The development of features should follow a logical order, building foundational elements first.
+
+Foundation & Core Data Exchange Needs:
+User Authentication (Mobile UI in React Native, interaction with external auth).
+Basic Application Shell (Navigation structure: Header, initial Bottom Bar in React Native).
+Local Data Models for Jobs, Articles, Locations, Units defined for Realm DB.
+Initial mechanism for fetching core data (e.g., list of jobs for a user) and storing in Realm DB.
+
+Core Task Viewing:
+Job List Screen: Display basic list of tasks from Realm DB. 
+Job Detail Screens (General, Location, Needed Articles - read-only initially from Realm DB). 
+This provides immediate value by allowing users to see their assignments.   
+
+Basic Job Execution & Offline Capability:
+Perform Job Screen: Allow updating status of inspection points, saving to Realm DB. 
+Local Device Database Setup: Realm DB schema and initialization.
+Offline Viewing: Ability to see job details offline from Realm DB if previously accessed online. 
+Basic Local Save: Save point status changes locally to Realm DB. 
+Initial Sync Mechanism: Basic data sync (upload/download) between Realm DB and external system.   
+
+Expanding Job Execution Features:
+Adding Descriptions, Photos to inspection points (requires local file handling & sync, photo metadata in Realm DB). 
+Implementing "Cost to Bill" and "Follow-up Actions" (requires modal UI and data structures in Realm DB).    
+
+User Profile Management:
+Profile Screen: View profile data (synced to Realm DB). 
+Edit Profile: Allow users to update their information (for local save to Realm DB & sync). 
+Password Management: Securely change password (interaction with external auth).    
+
+Shopping List Functionality:
+Logic for aggregating shopping list needs from synced job data in Realm DB.
+Shopping List Overview Screen: Display items, allow input of picked-up quantities locally to Realm DB. 
+Shopping List Detail Screen: Allocate items to jobs locally in Realm DB. 
+Home Screen Integration: Display shopping list summary on Home from Realm DB.    
+
+Task Creation (Maintenance/Cleaning):
+Requires local support for templates and point configuration in Realm DB.
+Step 1 (General Info) & Step 2 (Templates & Points) UI and logic for local creation in Realm DB and later sync.  This is complex and can be a significant module.   
+
+Full Article Management (Used, Returned, Broken):
+Requires detailed local inventory tracking logic in Realm DB.
+Individual screens for each article type, with specific validation and offline rules, for local save to Realm DB and sync.    
+
+Advanced Features & Refinements:
+Job Summary Screen: Consolidate all locally stored job data from Realm DB. 
+Full Offline Mode: Implement all specified behaviors and restrictions with Realm DB. 
+Role-Based Access & Special Cases (Coworker, Reviewer rejected job - based on synced data in Realm DB). 
+Multi-Tenancy in Authentication. 
+Notifications (if requiring external triggers). 
+Comprehensive Filtering and UI Polish in React Native.   
+
+Getting to something usable/visible front end quickly: Focus on items 1, 2, and the most basic parts of 3. This allows users to log in, see their tasks, and perhaps mark a task point as done using React Native and Realm DB.
+
+Properly pacing and scoping each feature: Each major feature (Authentication, Job List, Perform Job, Shopping List, etc.) can be broken down. For example, "Perform Job" starts with simple status updates, then adds descriptions, then photos, then costs, etc., allowing for iterative development and testing.
+
+Risks and Mitigations
+
+Technical Challenges
+Complex Offline Synchronization Logic with Realm DB: 
+Risk: Data inconsistency, data loss, or conflicts during synchronization between the mobile Realm DB and the external system, especially with conditional save rules for "additional" articles.
+Mitigation:
+Leverage Realm Sync capabilities if applicable, or design a robust custom synchronization protocol with clear rules for data precedence and conflict resolution.
+Implement comprehensive logging on the mobile app for sync operations to aid debugging.
+Conduct extensive testing under various network conditions (flaky, slow, no connection, intermittent) with Realm DB.
+Clearly communicate to users when certain actions (like saving "additional" articles) require an online connection for immediate validation or synchronization. 
+Intricate Template Application Logic (Create Task - Step 2 on Mobile with React Native): 
+Risk: Bugs in handling the numerous "rainy cases" for template interactions locally in the React Native app, leading to incorrect job point configurations before synchronization from Realm DB.
+Mitigation:
+Develop detailed state diagrams or flowcharts for the template logic on the mobile app.
+Create an extensive suite of unit and integration tests covering all specified scenarios for local processing.
+Perform thorough user acceptance testing with users creating tasks with complex template and unit combinations.
+Performance with Large Datasets in Realm DB on Mobile: 
+Risk: Slow loading times or unresponsive UI for job lists, article lists, or units/points within a job when handling large amounts of locally stored or recently synced data in Realm DB.
+Mitigation:
+Optimize Realm DB queries and data structures.
+Implement UI virtualization techniques for long lists in React Native (e.g., FlatList).
+Profile and optimize rendering performance on target mobile devices.
+Image Handling and Local Storage with React Native: 
+Risk: Excessive local storage consumption, slow image processing on the device, especially with up to 8 photos per inspection point.
+Mitigation:
+Implement client-side image compression using React Native libraries before storing locally or preparing for upload.
+Use background threads or asynchronous operations for local image processing to avoid blocking the UI.
+Implement an efficient local caching strategy for images, with mechanisms for clearing cache if needed, and inform users about storage usage.
+Provide clear feedback to users during image processing.
+Implementing Role-Based Access Control (RBAC) and Special Cases on Mobile: 
+Risk: Incorrect UI presentation or feature availability based on user roles or job statuses (data for which is synced to Realm DB), leading to confusion or attempts to perform unauthorized actions.
+Mitigation:
+Ensure the React Native app correctly interprets synced role and status data from Realm DB to adjust UI and available actions.
+Develop comprehensive test cases for each user role and job status scenario as reflected on the mobile device.   
+
+Figuring out the MVP that we can build upon
+Risk:
+Over-scoping the MVP with too many offline complexities in Realm DB, leading to extended development time and delayed feedback.
+Under-scoping the MVP, resulting in a product that doesn't offer enough core mobile value to early users.
+Mitigation:
+Prioritize the absolute core user flow for mobile: login, view assigned tasks (synced to Realm DB), perform the most critical action on a task (e.g., update status locally in Realm DB), and basic offline viewing of previously synced data.
+Engage with stakeholders and potential end-users early to validate MVP scope for mobile utility.
+Focus on a single user role or job type for the initial MVP if necessary to reduce complexity of data handling in Realm DB and UI adaptation in React Native.
+Design the MVP's Realm DB schema and React Native UI with future scalability in mind.
+
+Resource Constraints
+Risk: Insufficient React Native/Realm DB development, QA, or design resources leading to delays, compromised quality, or an incomplete mobile feature set.
+Mitigation:
+Clearly define and prioritize mobile features based on impact and effort (as outlined in the Development Roadmap).
+Adopt a phased rollout strategy for mobile features, allowing for iterative development and feedback.
+Maintain a realistic assessment of scope for mobile development based on available resources.
+Ensure clear communication channels within the team and with stakeholders regarding progress and potential roadblocks for the mobile app.
+
+Appendix
+
+Glossary
+To ensure clarity and prevent ambiguity, the following terms, as used within this PRD and derived from the source requirements , are defined:   
+
+Main Worker: The primary employee assigned to a job, for whom shopping list articles are aggregated. [1]
+Root Unit: In the context of "Create Task - Step 2," this typically refers to the primary location or top-level unit to which job points and templates are applied. It can be selected explicitly or implicitly when a "General Template" is chosen. [1]
+Inspection Template (in Task Creation): When creating Maintenance or Cleaning jobs (Section 7.2.2 of original PRD), this term refers to a pre-defined set of task points or a work template that can be applied to the job. It is not limited to "Inspection" type jobs in this specific context. [1]
+General Template (in Task Creation): An additional template that can be applied during task creation, often interacting with the "Inspection Template" and location/unit selections to define job points. It appears to provide a supplementary set of tasks, potentially based on location or broader standards. [1]
+Article "from job": Refers to articles that are part of the initial allocation or bill of materials for a specific job. [1]
+Article "from location": Refers to articles that are considered general stock existing at a job's location, not specifically allocated to the current job beforehand. [1]
+Article "from Van": Refers to articles sourced from a mobile storage unit (Van) associated with a worker. [1]
+Ready Job Offline: A job that has been prepared or cached in the mobile app for execution without an active internet connection. These jobs have specific visual indicators and interaction restrictions on the Home screen. [1]

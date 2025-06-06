@@ -1,0 +1,96 @@
+# Task ID: 16
+# Title: Implement Job Summary Screen
+# Status: pending
+# Dependencies: 14, 15
+# Priority: medium
+# Description: Create the Job Summary screen with expandable sections for results, time spent, articles, expenditures, follow-up actions, and general feedback before job submission.
+# Details:
+1. Create JobSummaryScreen component:
+```typescript
+const JobSummaryScreen: React.FC<{ jobId: string }> = ({ jobId }) => {
+  const [jobSummary, setJobSummary] = useState<JobSummary | null>(null);
+  const [expandedSections, setExpandedSections] = useState<string[]>(['results']);
+  
+  // Load job summary
+  useEffect(() => {
+    loadJobSummary(jobId);
+  }, [jobId]);
+  
+  const toggleSection = (section: string) => {
+    if (expandedSections.includes(section)) {
+      setExpandedSections(expandedSections.filter(s => s !== section));
+    } else {
+      setExpandedSections([...expandedSections, section]);
+    }
+  };
+  
+  const handleSubmit = async () => {
+    // Submit job
+  };
+  
+  return (
+    <AppLayout title="Job Summary">
+      <ScrollView>
+        <ExpandableSection 
+          title="Results" 
+          expanded={expandedSections.includes('results')} 
+          onToggle={() => toggleSection('results')} 
+        >
+          <ResultsSection results={jobSummary?.results} />
+        </ExpandableSection>
+        
+        <ExpandableSection 
+          title="Time Spent" 
+          expanded={expandedSections.includes('time')} 
+          onToggle={() => toggleSection('time')} 
+        >
+          <TimeSection time={jobSummary?.time} />
+        </ExpandableSection>
+        
+        {/* Similar sections for Articles, Expenditures, Follow-up Actions, Feedback */}
+      </ScrollView>
+      
+      <Button title="Submit Job" onPress={handleSubmit} />
+    </AppLayout>
+  );
+};
+```
+
+2. Implement ExpandableSection component for collapsible sections
+3. Create section-specific components:
+   - ResultsSection
+   - TimeSection
+   - ArticlesSection (with sub-sections for Used, Returned, Broken)
+   - ExpendituresSection
+   - FollowUpActionsSection
+   - FeedbackSection
+
+4. Implement JobSummaryService to handle summary operations:
+```typescript
+class JobSummaryService {
+  // Get job summary
+  async getJobSummary(jobId: string): Promise<JobSummary> {...}
+  
+  // Submit completed job
+  async submitJob(jobId: string): Promise<boolean> {...}
+  
+  // Check if job can be submitted
+  async canSubmitJob(jobId: string): Promise<{canSubmit: boolean, reason?: string}> {...}
+}
+```
+
+5. Create validation for job submission
+6. Implement success message for job submission
+7. Handle role-based restrictions (e.g., coworkers can only edit "Actual hours")
+
+# Test Strategy:
+1. Unit test JobSummaryScreen, ExpandableSection, and section-specific components
+2. Test section expansion/collapse functionality
+3. Verify job summary data is displayed correctly
+4. Test job submission validation
+5. Verify success message appears after submission
+6. Test role-based restrictions
+7. Verify data is correctly loaded from local database
+8. Test offline behavior for job summary
+9. Verify synchronization of submitted job data
+10. Test error handling for submission failures

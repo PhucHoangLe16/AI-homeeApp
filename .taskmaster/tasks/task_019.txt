@@ -1,0 +1,73 @@
+# Task ID: 19
+# Title: Implement Role-Based Access Control
+# Status: pending
+# Dependencies: 4, 13, 14, 16
+# Priority: medium
+# Description: Implement role-based functionality and UI adaptation based on the user's role (e.g., 'coworker') or job status (e.g., 'Reviewer rejected job').
+# Details:
+1. Create RoleBasedAccessControl service:
+```typescript
+class RoleBasedAccessControl {
+  // Check if user has permission for specific action
+  async hasPermission(userId: string, action: string, resourceType: string, resourceId?: string): Promise<boolean> {...}
+  
+  // Get user roles
+  async getUserRoles(userId: string): Promise<string[]> {...}
+  
+  // Check if user is a coworker
+  async isCoworker(userId: string): Promise<boolean> {...}
+  
+  // Check if job was rejected by reviewer
+  async isRejectedByReviewer(jobId: string): Promise<boolean> {...}
+}
+```
+
+2. Implement RoleAwareComponent HOC to conditionally render components based on permissions:
+```typescript
+const RoleAwareComponent: React.FC<{
+  requiredPermission: string;
+  resourceType: string;
+  resourceId?: string;
+  fallback?: React.ReactNode;
+  children: React.ReactNode;
+}> = ({ requiredPermission, resourceType, resourceId, fallback, children }) => {
+  const [hasPermission, setHasPermission] = useState(false);
+  const { userId } = useAuth();
+  
+  useEffect(() => {
+    const checkPermission = async () => {
+      const rbac = new RoleBasedAccessControl();
+      const permitted = await rbac.hasPermission(userId, requiredPermission, resourceType, resourceId);
+      setHasPermission(permitted);
+    };
+    
+    checkPermission();
+  }, [userId, requiredPermission, resourceType, resourceId]);
+  
+  return hasPermission ? <>{children}</> : <>{fallback || null}</>;
+};
+```
+
+3. Implement special case handling for "Reviewer rejected job":
+   - Allow viewing and restarting rejected jobs
+   - Restrict editing articles "from job"
+
+4. Create coworker role restrictions:
+   - View-only access to "Perform Job" and "Summary" pages
+   - Allow editing "Actual hours"
+
+5. Update affected screens to use RoleAwareComponent for conditional rendering
+6. Implement permission checks in service methods
+7. Create role-based navigation restrictions
+
+# Test Strategy:
+1. Unit test RoleBasedAccessControl service and RoleAwareComponent
+2. Test permission checks for different user roles
+3. Verify coworker restrictions work correctly
+4. Test special case handling for rejected jobs
+5. Verify conditional rendering based on permissions
+6. Test role-based navigation restrictions
+7. Verify service method permission checks
+8. Test with different user roles and job statuses
+9. Verify UI adapts correctly based on role and job status
+10. Test error handling for permission checks

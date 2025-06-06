@@ -1,0 +1,79 @@
+# Task ID: 13
+# Title: Implement Job Detail Screens
+# Status: pending
+# Dependencies: 12
+# Priority: high
+# Description: Create the Job Detail screens to display general information, location details, and needed articles before starting a job.
+# Details:
+1. Create JobDetailScreen component with tabs for different sections:
+```typescript
+const JobDetailScreen: React.FC<{ jobId: string }> = ({ jobId }) => {
+  const [activeTab, setActiveTab] = useState('general');
+  const [job, setJob] = useState<JobDetail | null>(null);
+  
+  // Load job details
+  useEffect(() => {
+    loadJobDetail(jobId);
+  }, [jobId]);
+  
+  const handleStartJob = () => {
+    // Navigate to Perform Job screen
+  };
+  
+  return (
+    <AppLayout title={`Job: ${job?.title || ''}`}>
+      <TabSelector 
+        activeTab={activeTab} 
+        onTabChange={setActiveTab} 
+        tabs={[
+          { id: 'general', label: 'General' },
+          { id: 'location', label: 'Location' },
+          { id: 'articles', label: 'Needed Articles' }
+        ]} 
+      />
+      {activeTab === 'general' && <GeneralInfoTab job={job} />}
+      {activeTab === 'location' && <LocationTab location={job?.location} />}
+      {activeTab === 'articles' && <NeededArticlesTab articles={job?.articles} />}
+      
+      <Button 
+        title="Start Job" 
+        onPress={handleStartJob} 
+        disabled={!job || job.status === 'completed'} 
+      />
+    </AppLayout>
+  );
+};
+```
+
+2. Implement GeneralInfoTab component to display job details (title, ID, type, status, dates, estimated hours, instructions)
+3. Create LocationTab component to show location information
+4. Implement NeededArticlesTab component to display articles required for the job
+5. Create JobDetailService to handle job detail operations:
+```typescript
+class JobDetailService {
+  // Get detailed job information
+  async getJobDetail(jobId: string): Promise<JobDetail> {...}
+  
+  // Check if job can be started
+  async canStartJob(jobId: string): Promise<boolean> {...}
+  
+  // Mark job as started
+  async startJob(jobId: string): Promise<boolean> {...}
+}
+```
+
+6. Implement role-based access control for job actions (e.g., coworkers cannot start jobs)
+7. Handle special case for "Reviewer rejected job"
+8. Create navigation to Perform Job screen
+
+# Test Strategy:
+1. Unit test JobDetailScreen, GeneralInfoTab, LocationTab, NeededArticlesTab components
+2. Test tab switching between job detail sections
+3. Verify job details are displayed correctly
+4. Test Start Job button is disabled for completed jobs
+5. Verify role-based access control works correctly
+6. Test special case handling for rejected jobs
+7. Verify navigation to Perform Job screen works
+8. Test offline behavior for job detail operations
+9. Verify data is loaded correctly from local database
+10. Test error handling for missing job data

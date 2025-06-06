@@ -1,0 +1,87 @@
+# Task ID: 10
+# Title: Implement Shopping List Overview Screen
+# Status: pending
+# Dependencies: 7, 8
+# Priority: medium
+# Description: Create the Shopping List overview screen to display consolidated articles, allow filtering, input picked-up quantities, and mark shopping lists as complete.
+# Details:
+1. Create ShoppingListScreen component:
+```typescript
+const ShoppingListScreen: React.FC = () => {
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [warehouse, setWarehouse] = useState<string | null>(null);
+  const [articleType, setArticleType] = useState<string | null>(null);
+  const [articles, setArticles] = useState<Article[]>([]);
+  
+  // Load articles based on filters
+  useEffect(() => {
+    loadArticles(selectedDate, warehouse, articleType);
+  }, [selectedDate, warehouse, articleType]);
+  
+  const handlePickedUpChange = (articleId: string, quantity: number) => {
+    // Update picked up quantity locally
+  };
+  
+  const handleConfirm = () => {
+    // Check if all items are collected
+    const uncollectedItems = articles.filter(a => a.pickedUp < a.reserved);
+    
+    if (uncollectedItems.length > 0) {
+      // Show warning
+    }
+    
+    // Finalize pickup
+  };
+  
+  return (
+    <AppLayout title="Shopping List">
+      <FilterSection 
+        date={selectedDate} 
+        onDateChange={setSelectedDate}
+        warehouse={warehouse}
+        onWarehouseChange={setWarehouse}
+        articleType={articleType}
+        onArticleTypeChange={setArticleType}
+      />
+      <ArticleList 
+        articles={articles} 
+        onPickedUpChange={handlePickedUpChange} 
+        onArticlePress={navigateToDetail}
+      />
+      <Button title="Confirm" onPress={handleConfirm} />
+    </AppLayout>
+  );
+};
+```
+
+2. Implement FilterSection component with date, warehouse, and article type filters
+3. Create ArticleList component to display articles with input for picked-up quantity
+4. Implement ShoppingListService to handle shopping list operations:
+```typescript
+class ShoppingListService {
+  // Get articles for shopping list based on filters
+  async getArticles(date: Date, warehouse?: string, type?: string): Promise<Article[]> {...}
+  
+  // Update picked up quantity
+  async updatePickedUpQuantity(articleId: string, quantity: number): Promise<boolean> {...}
+  
+  // Finalize shopping list
+  async confirmShoppingList(date: Date): Promise<boolean> {...}
+}
+```
+
+5. Implement warning dialog for uncollected items
+6. Create success message for shopping list completion
+7. Implement navigation to article detail screen
+
+# Test Strategy:
+1. Unit test ShoppingListScreen, FilterSection, ArticleList components
+2. Test filter functionality for date, warehouse, and article type
+3. Verify picked-up quantity input works correctly
+4. Test warning dialog appears for uncollected items
+5. Verify confirmation process works correctly
+6. Test success message appears after completion
+7. Verify navigation to article detail works
+8. Test offline behavior for shopping list operations
+9. Verify data is correctly saved to local database
+10. Test synchronization of shopping list data

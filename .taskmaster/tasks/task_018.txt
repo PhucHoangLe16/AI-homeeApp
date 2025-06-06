@@ -1,0 +1,78 @@
+# Task ID: 18
+# Title: Implement Photo Capture and Management
+# Status: pending
+# Dependencies: 14
+# Priority: medium
+# Description: Create a reusable photo capture and management component for inspection points, supporting up to 8 photos per point with view/delete capabilities.
+# Details:
+1. Create PhotoManager component:
+```typescript
+const PhotoManager: React.FC<{
+  photos: Photo[];
+  onAddPhoto: () => void;
+  onDeletePhoto: (photoId: string) => void;
+  onViewPhoto: (photoId: string) => void;
+  maxPhotos?: number;
+}> = ({ photos, onAddPhoto, onDeletePhoto, onViewPhoto, maxPhotos = 8 }) => {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Photos ({photos.length}/{maxPhotos})</Text>
+      <View style={styles.photoGrid}>
+        {photos.map(photo => (
+          <PhotoThumbnail 
+            key={photo.id} 
+            photo={photo} 
+            onDelete={() => onDeletePhoto(photo.id)} 
+            onView={() => onViewPhoto(photo.id)} 
+          />
+        ))}
+        {photos.length < maxPhotos && (
+          <AddPhotoButton onPress={onAddPhoto} />
+        )}
+      </View>
+    </View>
+  );
+};
+```
+
+2. Implement PhotoThumbnail component to display photo with delete button
+3. Create AddPhotoButton component
+4. Implement PhotoCaptureScreen for taking new photos
+5. Create PhotoViewScreen for viewing full-size photos
+6. Implement PhotoService to handle photo operations:
+```typescript
+class PhotoService {
+  // Take new photo
+  async capturePhoto(): Promise<Photo> {...}
+  
+  // Get photo from gallery
+  async selectPhotoFromGallery(): Promise<Photo> {...}
+  
+  // Save photo to local storage
+  async savePhoto(photo: Photo): Promise<string> {...}
+  
+  // Delete photo from local storage
+  async deletePhoto(photoId: string): Promise<boolean> {...}
+  
+  // Get photo storage path based on user settings
+  getPhotoStoragePath(): string {...}
+}
+```
+
+7. Implement photo compression to reduce storage usage
+8. Create photo storage strategy based on user settings
+9. Implement photo synchronization with external system
+
+# Test Strategy:
+1. Unit test PhotoManager, PhotoThumbnail, AddPhotoButton components
+2. Test photo capture functionality
+3. Verify photo gallery selection works
+4. Test photo deletion
+5. Verify maximum photo limit is enforced
+6. Test photo viewing functionality
+7. Verify photo compression works correctly
+8. Test photo storage based on user settings
+9. Verify photo synchronization works
+10. Test offline behavior for photo operations
+11. Verify photos are correctly saved to local storage
+12. Test error handling for photo operations
